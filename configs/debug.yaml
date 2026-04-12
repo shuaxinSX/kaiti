@@ -1,0 +1,31 @@
+# =============================================================================
+# debug.yaml — 调试用小网格快速配置
+# =============================================================================
+# 覆盖 base.yaml 中的参数，用于快速调试和开发。
+# 使用方式：先加载 base.yaml，再用 debug.yaml 覆盖。
+
+physics:
+  omega: 10.0                    # 低频，减少采样需求
+
+grid:
+  nx: 32                         # 小网格
+  ny: 32
+
+pml:
+  width: 5                       # 缩小 PML
+
+eikonal:
+  fsm_max_iter: 20               # 减少迭代次数
+  fsm_tol: 1.0e-8
+
+model:
+  nsno_blocks: 2                 # 减少 Block 数
+  nsno_channels: 16              # 减少通道数
+  fno_modes: 8                   # 减少模式数
+
+training:
+  epochs: 50                     # 减少轮次
+  lr: 1.0e-3
+
+logging:
+  level: "DEBUG"                 # 调试时打开详细日志
