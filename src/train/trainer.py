@@ -26,6 +26,28 @@ from src.train.losses import loss_total
 logger = logging.getLogger(__name__)
 
 
+def resolve_device(requested_device=None):
+    """Resolve an execution device while keeping CPU as the backward-compatible default."""
+    if requested_device is None:
+        return torch.device("cpu")
+
+    if isinstance(requested_device, torch.device):
+        device = requested_device
+    else:
+        requested = str(requested_device).strip().lower()
+        if requested == "auto":
+            requested = "cuda" if torch.cuda.is_available() else "cpu"
+        device = torch.device(requested)
+
+    if device.type == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but is not available.")
+
+    if device.type == "cuda" and device.index is None:
+        device = torch.device(f"cuda:{torch.cuda.current_device()}")
+
+    return device
+
+
 def build_network_input(grid, medium, source, bg, tau_d, omega):
     """构建网络输入张量 [1, 8, H, W]。
 
@@ -65,9 +87,13 @@ def build_network_input(grid, medium, source, bg, tau_d, omega):
 class Trainer:
     """最小训练循环。"""
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, device=None):
         self.cfg = cfg
         omega = cfg.physics.omega
+        requested_device = device
+        if requested_device is None and hasattr(cfg.training, "device"):
+            requested_device = cfg.training.device
+        self.device = resolve_device(requested_device)
 
         # 构建预处理管线
         logger.info("构建预处理管线...")
@@ -89,22 +115,27 @@ class Trainer:
         self.residual_computer = ResidualComputer(
             self.grid, self.pml, self.tau_d, self.rhs,
             self.loss_mask, omega, self.diff_ops,
-        )
+        ).to(self.device)
 
         # 网络输入
         self.net_input = build_network_input(
             self.grid, self.medium, self.source, self.bg, self.tau_d, omega
-        )
+        ).to(self.device)
 
         # 模型：固定初始化，避免测试依赖外部全局 RNG 状态
         rng_state = torch.random.get_rng_state()
         torch.manual_seed(0)
-        self.model = NSNO2D(cfg)
+        self.model = NSNO2D(cfg).to(self.device)
         torch.random.set_rng_state(rng_state)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=cfg.training.lr)
 
-        logger.info("预处理完成。网格: %dx%d, ω=%.1f",
-                     self.grid.nx_total, self.grid.ny_total, omega)
+        logger.info(
+            "预处理完成。网格: %dx%d, ω=%.1f, device=%s",
+            self.grid.nx_total,
+            self.grid.ny_total,
+            omega,
+            self.device,
+        )
 
     def train(self, epochs=None):
         """执行训练循环。
@@ -157,8 +188,8 @@ class Trainer:
         with torch.no_grad():
             A_scat = self.model(self.net_input)
 
-        A_r = A_scat[0, 0].numpy().astype(np.float64)
-        A_i = A_scat[0, 1].numpy().astype(np.float64)
+        A_r = A_scat[0, 0].detach().cpu().numpy().astype(np.float64)
+        A_i = A_scat[0, 1].detach().cpu().numpy().astype(np.float64)
         A_complex = A_r + 1j * A_i
 
         # 安全 tau

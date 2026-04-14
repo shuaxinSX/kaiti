@@ -79,6 +79,28 @@ class ResidualComputer:
 
         # 掩码
         self.loss_mask = torch.from_numpy(loss_mask).float()
+        self.device = torch.device("cpu")
+
+    def to(self, device):
+        """Move cached tensors to the requested device."""
+        self.device = torch.device(device)
+        tensor_names = (
+            "A_x",
+            "A_y",
+            "B_x",
+            "B_y",
+            "grad_tau_x",
+            "grad_tau_y",
+            "damp_coeff",
+            "grad_tau_x_stretched",
+            "grad_tau_y_stretched",
+            "lap_tau_c",
+            "rhs_c",
+            "loss_mask",
+        )
+        for name in tensor_names:
+            setattr(self, name, getattr(self, name).to(self.device))
+        return self
 
     def _precompute_pml_lap_tau(self, pml, tau_d, diff_ops):
         """预计算 PML 拉伸走时拉普拉斯 Δ̃τ 和梯度系数。
@@ -132,6 +154,11 @@ class ResidualComputer:
             }
         """
         omega = self.omega
+        if A_scat_dual.device != self.device:
+            raise RuntimeError(
+                f"ResidualComputer device mismatch: expected {self.device}, "
+                f"got {A_scat_dual.device}"
+            )
 
         # 组装复数 Â = A_r + i·A_i
         A_r = A_scat_dual[:, 0:1, :, :]  # [B, 1, H, W]

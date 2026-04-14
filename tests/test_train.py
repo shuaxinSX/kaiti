@@ -84,3 +84,10 @@ class TestTrainer:
         """网络输入不含 NaN/Inf。"""
         trainer = Trainer(cfg_homogeneous)
         assert torch.all(torch.isfinite(trainer.net_input))
+
+    def test_trainer_respects_explicit_device(self, cfg_homogeneous):
+        """Trainer 会将模型、输入和残差缓存放到指定设备。"""
+        trainer = Trainer(cfg_homogeneous, device="cpu")
+        assert next(trainer.model.parameters()).device.type == "cpu"
+        assert trainer.net_input.device.type == "cpu"
+        assert trainer.residual_computer.device.type == "cpu"
