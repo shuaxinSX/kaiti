@@ -45,6 +45,12 @@ class Grid2D:
 
         # 均匀步长（x 和 y 方向一致）
         self.h = (self.x_max - self.x_min) / self.nx
+        hy = (self.y_max - self.y_min) / self.ny
+        if abs(self.h - hy) > 1e-12:
+            raise ValueError(
+                f"网格步长不一致: hx={self.h:.6e}, hy={hy:.6e}. "
+                f"要求 (x_max-x_min)/nx == (y_max-y_min)/ny"
+            )
 
         # 总格点数（含 PML 两侧）
         self.nx_total = self.nx + 2 * self.pml_width

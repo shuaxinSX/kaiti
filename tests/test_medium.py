@@ -91,3 +91,25 @@ class TestMediumShape:
 
     def test_slowness_tensor_shape(self, grid, medium):
         assert medium.slowness_t.shape == (grid.ny_total, grid.nx_total)
+
+
+class TestMediumLayered:
+    """测试 layered 速度模型。"""
+
+    def test_layered_has_multiple_velocities(self, grid, cfg):
+        """物理域内应有多个不同速度值。"""
+        cfg.medium.velocity_model = "layered"
+        medium = Medium2D(grid, cfg)
+        phys_slice = grid.physical_slice()
+        phys_vel = medium.velocity[phys_slice]
+        unique_vals = len(set(np.round(phys_vel.flatten(), decimals=8)))
+        assert unique_vals >= 2
+
+    def test_layered_pml_degrades(self, grid, cfg):
+        """layered 下 PML 退化到 s0。"""
+        cfg.medium.velocity_model = "layered"
+        medium = Medium2D(grid, cfg)
+        pml_mask = grid.pml_mask()
+        np.testing.assert_allclose(
+            medium.slowness[pml_mask], medium.s0, atol=1e-14,
+        )
