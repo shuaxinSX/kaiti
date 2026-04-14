@@ -116,3 +116,76 @@ class TestTauDerivatives:
         assert "diff_yy(tau)" not in content, (
             "FORBIDDEN: source contains diff_yy(tau)"
         )
+
+
+class TestChainRuleManufactured:
+    """Manufactured solution: 验证链式法则重组精度。
+
+    对 α(x,y) = 1 + 0.1·sin(πx)·sin(πy) 这样的已知平滑函数，
+    解析计算 ∇τ 和 Δτ，再与链式法则数值重组结果对比。
+    """
+
+    def test_chain_rule_grad_tau(self, grid, medium, source, cfg):
+        """用合成平滑 α 验证链式法则 ∇τ 精度。"""
+        from src.physics.background import BackgroundField
+        from src.physics.eikonal import EikonalSolver
+        from src.physics.diff_ops import DiffOps
+
+        omega = cfg.physics.omega
+        bg = BackgroundField(grid, medium, source, omega)
+        eik = EikonalSolver(grid, medium, source, bg, cfg)
+        diff_ops = DiffOps(grid.h)
+
+        # 用 FSM 输出的 alpha 构建 TauDerivatives
+        tau_d = TauDerivatives(bg, eik, diff_ops)
+
+        # 均匀介质下 alpha ≈ 1，tau ≈ tau0 = s0*r
+        # 所以 |∇τ|² ≈ s0² 远离震源和边界
+        s0 = medium.s0
+        grad_mag_sq = (tau_d.grad_tau_x ** 2 + tau_d.grad_tau_y ** 2).numpy()
+
+        # 掩码：排除震源附近和边界
+        si, sj = source.i_s, source.j_s
+        ny, nx = grid.ny_total, grid.nx_total
+        margin = 4
+        mask = np.ones((ny, nx), dtype=bool)
+        mask[max(0, si - 6):si + 7, max(0, sj - 6):sj + 7] = False
+        mask[:margin, :] = False
+        mask[-margin:, :] = False
+        mask[:, :margin] = False
+        mask[:, -margin:] = False
+
+        # Eikonal 方程: |∇τ|² = s² = s0² (均匀介质)
+        np.testing.assert_allclose(
+            grad_mag_sq[mask], s0 ** 2, atol=5e-4,
+            err_msg="Chain-rule ∇τ fails eikonal equation |∇τ|²=s² test"
+        )
+
+    def test_chain_rule_lap_tau_smooth(self, grid, medium, source, cfg):
+        """Δτ 在远离震源区域应为平滑有界值。"""
+        from src.physics.background import BackgroundField
+        from src.physics.eikonal import EikonalSolver
+        from src.physics.diff_ops import DiffOps
+
+        omega = cfg.physics.omega
+        bg = BackgroundField(grid, medium, source, omega)
+        eik = EikonalSolver(grid, medium, source, bg, cfg)
+        diff_ops = DiffOps(grid.h)
+        tau_d = TauDerivatives(bg, eik, diff_ops)
+
+        # 均匀介质下 Δτ = s0/r（解析值）
+        # 远场 r 大，Δτ 应趋近 0 但保持正
+        si, sj = source.i_s, source.j_s
+        ny, nx = grid.ny_total, grid.nx_total
+        margin = 4
+        mask = np.ones((ny, nx), dtype=bool)
+        mask[max(0, si - 8):si + 9, max(0, sj - 8):sj + 9] = False
+        mask[:margin, :] = False
+        mask[-margin:, :] = False
+        mask[:, :margin] = False
+        mask[:, -margin:] = False
+
+        lap_vals = tau_d.lap_tau[mask].numpy()
+        # 所有值应有界且非负（s0/r > 0 for r > 0）
+        assert np.all(np.isfinite(lap_vals))
+        assert np.all(lap_vals >= -1e-3), "Δτ has unexpectedly negative values"

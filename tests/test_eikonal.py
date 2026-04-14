@@ -95,3 +95,62 @@ class TestEikonalSolver:
         assert solver.tau_t.shape == (grid.ny_total, grid.nx_total), (
             f"tau_t.shape = {tuple(solver.tau_t.shape)}, expected {expected_shape}"
         )
+
+
+class TestGodunovManufactured:
+    """Manufactured solution: 均匀介质 τ = s₀·r 解析对比。"""
+
+    def test_tau_matches_analytical(self, solver, grid, source, medium):
+        """FSM τ 与解析解 s₀·r 在远场一致 (L∞ < 0.01)。"""
+        s0 = medium.s0
+        tau_analytical = s0 * source.distance
+
+        # 排除震源近场（1/r 奇点）和边界 inf
+        si, sj = source.i_s, source.j_s
+        margin = 3
+        ny, nx = grid.ny_total, grid.nx_total
+        mask = np.ones((ny, nx), dtype=bool)
+        mask[max(0, si - 4):si + 5, max(0, sj - 4):sj + 5] = False
+        mask[:margin, :] = False
+        mask[-margin:, :] = False
+        mask[:, :margin] = False
+        mask[:, -margin:] = False
+        mask &= np.isfinite(solver.tau)
+
+        error = np.abs(solver.tau[mask] - tau_analytical[mask])
+        assert np.max(error) < 0.01, (
+            f"FSM tau deviates from analytical by {np.max(error):.6f}"
+        )
+
+    def test_eikonal_equation_residual(self, solver, grid, source, medium):
+        """验证 |∇τ|² ≈ s² = s₀² (eikonal 方程残差)。"""
+        from src.physics.diff_ops import DiffOps
+        import torch
+
+        h = grid.h
+        diff_ops = DiffOps(h)
+        s0 = medium.s0
+
+        # 数值求 tau 梯度（仅用于验证，与 tau_ops 不同路径）
+        tau_safe = np.where(np.isfinite(solver.tau), solver.tau, 0.0)
+        tau_t = torch.from_numpy(tau_safe)
+        dtau_dx = diff_ops.diff_x(tau_t).squeeze().numpy()
+        dtau_dy = diff_ops.diff_y(tau_t).squeeze().numpy()
+        grad_sq = dtau_dx ** 2 + dtau_dy ** 2
+
+        # 排除震源和边界
+        si, sj = source.i_s, source.j_s
+        ny, nx = grid.ny_total, grid.nx_total
+        margin = 4
+        mask = np.ones((ny, nx), dtype=bool)
+        mask[max(0, si - 6):si + 7, max(0, sj - 6):sj + 7] = False
+        mask[:margin, :] = False
+        mask[-margin:, :] = False
+        mask[:, :margin] = False
+        mask[:, -margin:] = False
+        mask &= np.isfinite(solver.tau)
+
+        np.testing.assert_allclose(
+            grad_sq[mask], s0 ** 2, atol=0.01,
+            err_msg="Eikonal equation |∇τ|²=s² violated"
+        )
