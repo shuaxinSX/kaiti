@@ -45,7 +45,7 @@ def _build_pipeline(cfg):
     eik = EikonalSolver(grid, medium, source, bg, cfg)
     diff_ops = DiffOps(grid.h)
     tau_d = TauDerivatives(bg, eik, diff_ops)
-    pml = PMLTensors(grid, cfg, omega)
+    pml = PMLTensors(grid, cfg, omega, s0=medium.s0)
     rhs = compute_rhs(grid, medium, source, bg, eik, omega)
     mask = compute_loss_mask(grid, source, cfg)
     rc = ResidualComputer(grid, pml, tau_d, rhs, mask, omega, diff_ops)

@@ -1,11 +1,12 @@
 """tests/test_pml.py -- PMLTensors unit tests"""
 
+import math
 import numpy as np
 import pytest
 from pathlib import Path
 
 from src.config import load_config
-from src.core import Grid2D
+from src.core import Grid2D, Medium2D
 from src.physics.pml import PMLTensors
 
 
@@ -20,9 +21,14 @@ def grid(cfg):
 
 
 @pytest.fixture
-def pml(grid, cfg):
+def medium(grid, cfg):
+    return Medium2D(grid, cfg)
+
+
+@pytest.fixture
+def pml(grid, cfg, medium):
     omega = cfg.physics.omega
-    return PMLTensors(grid, cfg, omega)
+    return PMLTensors(grid, cfg, omega, s0=medium.s0)
 
 
 class TestPhysicalDomain:
@@ -91,3 +97,19 @@ class TestShapes:
         assert pml.A_y_t.shape == expected
         assert pml.B_x_t.shape == expected
         assert pml.B_y_t.shape == expected
+
+
+class TestPMLAttenuation:
+    def test_pml_theoretical_reflection(self, grid, cfg, medium):
+        omega = cfg.physics.omega
+        pml = PMLTensors(grid, cfg, omega, s0=medium.s0)
+        L_pml = grid.pml_width * grid.h
+        p = cfg.pml.power
+        c_pml = 1.0 / medium.s0
+
+        log_reflection = -2.0 * pml.sigma_max * L_pml / ((p + 1) * c_pml)
+        R_theoretical = math.exp(
+            np.nextafter(log_reflection, -np.inf)
+        )
+
+        assert R_theoretical <= cfg.pml.R0

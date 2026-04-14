@@ -78,7 +78,7 @@ class Trainer:
         self.eik = EikonalSolver(self.grid, self.medium, self.source, self.bg, cfg)
         self.diff_ops = DiffOps(self.grid.h)
         self.tau_d = TauDerivatives(self.bg, self.eik, self.diff_ops)
-        self.pml = PMLTensors(self.grid, cfg, omega)
+        self.pml = PMLTensors(self.grid, cfg, omega, s0=self.medium.s0)
         self.rhs = compute_rhs(
             self.grid, self.medium, self.source, self.bg, self.eik, omega, cfg
         )
@@ -96,8 +96,11 @@ class Trainer:
             self.grid, self.medium, self.source, self.bg, self.tau_d, omega
         )
 
-        # 模型
+        # 模型：固定初始化，避免测试依赖外部全局 RNG 状态
+        rng_state = torch.random.get_rng_state()
+        torch.manual_seed(0)
         self.model = NSNO2D(cfg)
+        torch.random.set_rng_state(rng_state)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=cfg.training.lr)
 
         logger.info("预处理完成。网格: %dx%d, ω=%.1f",

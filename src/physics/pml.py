@@ -5,7 +5,7 @@ import math
 
 
 class PMLTensors:
-    def __init__(self, grid, cfg, omega):
+    def __init__(self, grid, cfg, omega, s0=None):
         pw = grid.pml_width
         h = grid.h
         nx_total = grid.nx_total
@@ -13,7 +13,7 @@ class PMLTensors:
         L_pml = pw * h
         p = cfg.pml.power  # 2
         R0 = cfg.pml.R0
-        c_max = 1.0 / (1.0 / cfg.medium.c_background)  # = c_background
+        c_max = 1.0 / s0 if s0 is not None else cfg.medium.c_background
 
         # sigma_max from reflection coefficient formula (D6e)
         sigma_max = -(p + 1) * c_max * math.log(R0) / (2 * L_pml)
