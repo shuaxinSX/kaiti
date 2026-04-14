@@ -80,7 +80,7 @@ class Trainer:
         self.tau_d = TauDerivatives(self.bg, self.eik, self.diff_ops)
         self.pml = PMLTensors(self.grid, cfg, omega)
         self.rhs = compute_rhs(
-            self.grid, self.medium, self.source, self.bg, self.eik, omega
+            self.grid, self.medium, self.source, self.bg, self.eik, omega, cfg
         )
         self.loss_mask = compute_loss_mask(self.grid, self.source, cfg)
         self.omega = omega

@@ -50,22 +50,22 @@ class TestComputeRHS:
 
     def test_homogeneous_rhs_zero(self, grid, medium, source, bg, eik, cfg):
         """均匀介质: s=s0 → perturbation=0 → RHS 全零。"""
-        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega)
+        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega, cfg)
         np.testing.assert_allclose(np.abs(rhs), 0.0, atol=1e-20)
 
     def test_source_defuse(self, grid, medium, source, bg, eik, cfg):
         """震源点 RHS 精确为 0。"""
-        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega)
+        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega, cfg)
         assert rhs[source.i_s, source.j_s] == 0.0 + 0.0j
 
     def test_no_nan_inf(self, grid, medium, source, bg, eik, cfg):
         """RHS 不含 NaN 或 Inf。"""
-        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega)
+        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega, cfg)
         assert np.all(np.isfinite(rhs))
 
     def test_shape(self, grid, medium, source, bg, eik, cfg):
         """RHS shape 正确。"""
-        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega)
+        rhs = compute_rhs(grid, medium, source, bg, eik, cfg.physics.omega, cfg)
         assert rhs.shape == (grid.ny_total, grid.nx_total)
 
 

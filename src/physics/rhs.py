@@ -13,8 +13,11 @@ import math
 import numpy as np
 
 
-def compute_rhs(grid, medium, source, bg, eikonal, omega):
+def compute_rhs(grid, medium, source, bg, eikonal, omega, cfg=None):
     """计算等效体源 RHS_eq。
+
+    Args:
+        cfg: Config 对象，用于读取 source_mask_radius。若为 None 则默认 1.5h。
 
     Returns:
         complex128 numpy 数组 [ny_total, nx_total]。
@@ -31,8 +34,9 @@ def compute_rhs(grid, medium, source, bg, eikonal, omega):
     # 等效体源
     rhs = -omega ** 2 * perturbation * bg.u0 * phase_strip
 
-    # 震源防爆 (D9)：近场硬编码清零
-    source_near = source.distance <= 1.5 * grid.h
+    # 震源防爆 (D9)：近场清零，半径与穿孔掩码一致
+    defuse_radius = cfg.loss.source_mask_radius if cfg is not None else 1.5
+    source_near = source.distance <= defuse_radius * grid.h
     rhs[source_near] = 0.0 + 0.0j
 
     return rhs
