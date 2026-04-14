@@ -130,12 +130,14 @@ def run_training(
     cfg = load_config(base_config, overlay_config)
     if velocity_model is not None:
         cfg.medium.velocity_model = velocity_model
+    if epochs is not None:
+        cfg.training.epochs = int(epochs)
     configure_logging(cfg.logging.level)
     final_output_dir = resolve_output_dir(cfg.logging.save_dir, output_dir)
     save_config_snapshot(cfg, final_output_dir)
 
     trainer = Trainer(cfg, device=device)
-    actual_epochs = epochs if epochs is not None else cfg.training.epochs
+    actual_epochs = cfg.training.epochs
 
     logger.info("运行输出目录: %s", final_output_dir)
     start_time = time.perf_counter()

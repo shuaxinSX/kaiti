@@ -44,12 +44,22 @@ class Config:
     """
 
     def __init__(self, data: Dict[str, Any]):
+        super().__setattr__("_data", {})
         for key, value in data.items():
-            if isinstance(value, dict):
-                setattr(self, key, Config(value))
-            else:
-                setattr(self, key, value)
-        self._data = data
+            setattr(self, key, value)
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key == "_data":
+            super().__setattr__(key, value)
+            return
+
+        wrapped = Config(value) if isinstance(value, dict) else value
+        super().__setattr__(key, wrapped)
+
+        if "_data" in self.__dict__:
+            self._data[key] = (
+                wrapped.to_dict() if isinstance(wrapped, Config) else copy.deepcopy(wrapped)
+            )
 
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)
@@ -59,10 +69,18 @@ class Config:
 
     def to_dict(self) -> Dict[str, Any]:
         """转换回普通字典。"""
-        return copy.deepcopy(self._data)
+        result = {}
+        for key, value in self.__dict__.items():
+            if key == "_data":
+                continue
+            if isinstance(value, Config):
+                result[key] = value.to_dict()
+            else:
+                result[key] = copy.deepcopy(value)
+        return result
 
     def __repr__(self) -> str:
-        return f"Config({self._data})"
+        return f"Config({self.to_dict()})"
 
 
 def load_config(

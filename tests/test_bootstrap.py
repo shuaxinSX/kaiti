@@ -110,6 +110,15 @@ class TestConfig:
         assert isinstance(d, dict)
         assert "physics" in d
 
+    def test_config_mutation_updates_to_dict(self, base_path):
+        from src.config import load_config
+        cfg = load_config(base_path)
+        cfg.training.epochs = 123
+        cfg.medium.velocity_model = "smooth_lens"
+        d = cfg.to_dict()
+        assert d["training"]["epochs"] == 123
+        assert d["medium"]["velocity_model"] == "smooth_lens"
+
 
 # ---------------------------------------------------------------------------
 # T3. 日志测试

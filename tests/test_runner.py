@@ -3,6 +3,8 @@
 ==============
 """
 
+import yaml
+
 from pathlib import Path
 
 from src.train.runner import run_training
@@ -34,3 +36,8 @@ def test_run_training_saves_artifacts(tmp_path):
     assert (output_dir / "wavefield.npy").exists()
     assert (output_dir / "wavefield.png").exists()
     assert (output_dir / "model_state.pt").exists()
+
+    with open(output_dir / "config_merged.yaml", "r", encoding="utf-8") as f:
+        merged = yaml.safe_load(f)
+    assert merged["training"]["epochs"] == 1
+    assert merged["medium"]["velocity_model"] == "smooth_lens"
