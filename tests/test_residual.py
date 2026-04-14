@@ -27,7 +27,15 @@ def cfg():
 
 
 @pytest.fixture
-def pipeline(cfg):
+def cfg_lens():
+    base = Path(__file__).parent.parent / "configs" / "base.yaml"
+    debug = Path(__file__).parent.parent / "configs" / "debug.yaml"
+    cfg = load_config(base, debug)
+    cfg.medium.velocity_model = "smooth_lens"
+    return cfg
+
+
+def _build_pipeline(cfg):
     """构建完整预处理管线。"""
     grid = Grid2D(cfg)
     medium = Medium2D(grid, cfg)
@@ -42,6 +50,16 @@ def pipeline(cfg):
     mask = compute_loss_mask(grid, source, cfg)
     rc = ResidualComputer(grid, pml, tau_d, rhs, mask, omega, diff_ops)
     return rc, grid
+
+
+@pytest.fixture
+def pipeline(cfg):
+    return _build_pipeline(cfg)
+
+
+@pytest.fixture
+def pipeline_lens(cfg_lens):
+    return _build_pipeline(cfg_lens)
 
 
 class TestResidualComputer:
@@ -87,3 +105,41 @@ class TestResidualComputer:
         result = rc.compute(A_scat)
         assert result['residual_real'].shape == (grid.ny_total, grid.nx_total)
         assert result['residual_imag'].shape == (grid.ny_total, grid.nx_total)
+
+
+class TestResidualPMLHeterogeneous:
+    """PML 激活 + 非均匀介质下的残差测试。"""
+
+    def test_lens_forward_no_nan(self, pipeline_lens):
+        """smooth_lens 介质 + PML 激活：残差不含 NaN/Inf。"""
+        rc, grid = pipeline_lens
+        A_scat = torch.randn(1, 2, grid.ny_total, grid.nx_total) * 0.01
+        result = rc.compute(A_scat)
+        assert torch.all(torch.isfinite(result['residual_real']))
+        assert torch.all(torch.isfinite(result['residual_imag']))
+        assert torch.isfinite(result['loss_pde'])
+
+    def test_lens_nonzero_rhs(self, pipeline_lens):
+        """smooth_lens 有非零 RHS（s != s0），零网络残差应非零。"""
+        rc, grid = pipeline_lens
+        A_scat = torch.zeros(1, 2, grid.ny_total, grid.nx_total)
+        result = rc.compute(A_scat)
+        # 非均匀介质 RHS 不全为零，所以零网络应产生非零残差
+        assert result['loss_pde'].item() > 1e-15
+
+    def test_lens_pml_region_complex_coefficients(self, pipeline_lens):
+        """验证 PML 区域系数确实包含虚部。"""
+        rc, _ = pipeline_lens
+        # A_x 在 PML 区应有非零虚部
+        assert rc.A_x.imag.abs().max().item() > 0.0
+        assert rc.A_y.imag.abs().max().item() > 0.0
+
+    def test_lens_gradient_flows(self, pipeline_lens):
+        """非均匀介质下梯度能正常回传。"""
+        rc, grid = pipeline_lens
+        A_scat = torch.randn(1, 2, grid.ny_total, grid.nx_total) * 0.01
+        A_scat.requires_grad_(True)
+        result = rc.compute(A_scat)
+        result['loss_pde'].backward()
+        assert A_scat.grad is not None
+        assert torch.all(torch.isfinite(A_scat.grad))
