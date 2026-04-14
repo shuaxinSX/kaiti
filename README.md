@@ -80,6 +80,9 @@ python -c "from src.config import load_config; cfg = load_config('configs/base.y
 
 # 6. 运行一次完整训练并保存结果
 python scripts/run_train.py --overlay configs/debug.yaml --device auto --velocity-model smooth_lens
+
+# 7. 为已有实验目录补充评估 CSV 和热力图
+python scripts/evaluate_run.py --run-dir outputs/run_YYYYMMDD_HHMMSS --device auto
 ```
 
 ## 开发规范

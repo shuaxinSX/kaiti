@@ -66,6 +66,13 @@ def save_losses(losses, output_dir):
         for epoch, loss in enumerate(losses, start=1):
             writer.writerow([epoch, f"{loss:.16e}"])
 
+    tail_window = min(len(losses), 500)
+    with open(output_dir / "loss_tail.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["epoch", "loss"])
+        for epoch in range(len(losses) - tail_window, len(losses)):
+            writer.writerow([epoch + 1, f"{losses_array[epoch]:.16e}"])
+
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(np.arange(1, len(losses) + 1), losses_array, linewidth=1.5)
     ax.set_xlabel("Epoch")
@@ -74,6 +81,17 @@ def save_losses(losses, output_dir):
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
     fig.savefig(output_dir / "loss_curve.png", dpi=160)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.plot(np.arange(1, len(losses) + 1), losses_array, linewidth=1.5)
+    ax.set_yscale("log")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss (log)")
+    ax.set_title("Training Loss (Log Scale)")
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_dir / "loss_curve_log.png", dpi=160)
     plt.close(fig)
 
 
@@ -118,6 +136,295 @@ def save_summary(summary, output_dir):
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
 
+def dual_channel_to_complex(a_scat_dual):
+    """Convert [1, 2, H, W] dual-channel output into a complex numpy array."""
+    a_r = a_scat_dual[0, 0].detach().cpu().numpy().astype(np.float64)
+    a_i = a_scat_dual[0, 1].detach().cpu().numpy().astype(np.float64)
+    return a_r + 1j * a_i
+
+
+def compute_model_diagnostics(trainer):
+    """Compute residual and field diagnostics for the current model state."""
+    with torch.no_grad():
+        a_scat_dual = trainer.model(trainer.net_input)
+        residual = trainer.residual_computer.compute(a_scat_dual)
+
+    a_scat = dual_channel_to_complex(a_scat_dual)
+    u_total = trainer.reconstruct_wavefield()
+    residual_real = residual["residual_real"].detach().cpu().numpy().astype(np.float64)
+    residual_imag = residual["residual_imag"].detach().cpu().numpy().astype(np.float64)
+    residual_mag = np.hypot(residual_real, residual_imag)
+
+    physical_y, physical_x = trainer.grid.physical_slice()
+    physical_mask = ~trainer.grid.pml_mask()
+    evaluation_mask = physical_mask & trainer.loss_mask.astype(bool)
+
+    return {
+        "a_scat": a_scat,
+        "a_scat_mag": np.abs(a_scat),
+        "u_total": u_total,
+        "wavefield_mag": np.abs(u_total),
+        "residual_real": residual_real,
+        "residual_imag": residual_imag,
+        "residual_mag": residual_mag,
+        "velocity": trainer.medium.velocity,
+        "slowness": trainer.medium.slowness,
+        "rhs_mag": np.abs(trainer.rhs),
+        "loss_mask": trainer.loss_mask.astype(np.float64),
+        "physical_slice": (physical_y, physical_x),
+        "physical_mask": physical_mask,
+        "evaluation_mask": evaluation_mask,
+    }
+
+
+def save_vector_csv(values, output_path):
+    """Persist a 1D numeric vector."""
+    np.savetxt(output_path, np.asarray(values, dtype=np.float64), delimiter=",", fmt="%.16e")
+
+
+def save_matrix_csv(matrix, output_path):
+    """Persist a 2D numeric matrix."""
+    np.savetxt(output_path, np.asarray(matrix, dtype=np.float64), delimiter=",", fmt="%.16e")
+
+
+def compute_metric_bundle(losses, diagnostics):
+    """Assemble scalar metrics that summarize convergence and final field quality."""
+    losses_array = np.asarray(losses, dtype=np.float64)
+    tail_window = min(len(losses_array), 100)
+    evaluation_values = diagnostics["residual_mag"][diagnostics["evaluation_mask"]]
+    physical_values = diagnostics["residual_mag"][diagnostics["physical_mask"]]
+    wavefield_values = diagnostics["wavefield_mag"][diagnostics["physical_mask"]]
+    scattering_values = diagnostics["a_scat_mag"][diagnostics["physical_mask"]]
+
+    initial_loss = float(losses_array[0])
+    final_loss = float(losses_array[-1])
+    metrics = {
+        "initial_loss": initial_loss,
+        "best_loss": float(np.min(losses_array)),
+        "final_loss": final_loss,
+        "loss_reduction_ratio": float(final_loss / initial_loss) if initial_loss != 0.0 else 0.0,
+        "mean_last_100_loss": float(np.mean(losses_array[-tail_window:])),
+        "std_last_100_loss": float(np.std(losses_array[-tail_window:])),
+        "residual_mean_evaluation": float(np.mean(evaluation_values)),
+        "residual_rmse_evaluation": float(np.sqrt(np.mean(evaluation_values ** 2))),
+        "residual_p95_evaluation": float(np.quantile(evaluation_values, 0.95)),
+        "residual_max_evaluation": float(np.max(evaluation_values)),
+        "residual_mean_physical": float(np.mean(physical_values)),
+        "residual_p95_physical": float(np.quantile(physical_values, 0.95)),
+        "residual_max_physical": float(np.max(physical_values)),
+        "wavefield_mag_mean_physical": float(np.mean(wavefield_values)),
+        "wavefield_mag_p95_physical": float(np.quantile(wavefield_values, 0.95)),
+        "wavefield_mag_max_physical": float(np.max(wavefield_values)),
+        "scattering_mag_mean_physical": float(np.mean(scattering_values)),
+        "scattering_mag_p95_physical": float(np.quantile(scattering_values, 0.95)),
+        "scattering_mag_max_physical": float(np.max(scattering_values)),
+    }
+    return metrics
+
+
+def save_metrics_csv(metrics, output_dir):
+    """Write one-row metric summaries for spreadsheet-style inspection."""
+    with open(output_dir / "metrics_summary.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(metrics.keys()))
+        writer.writeheader()
+        writer.writerow(metrics)
+
+
+def save_quantiles_csv(diagnostics, output_dir):
+    """Write distribution quantiles for the main diagnostic fields."""
+    quantiles = (0.50, 0.90, 0.95, 0.99, 1.00)
+    regions = {
+        "physical": diagnostics["physical_mask"],
+        "evaluation": diagnostics["evaluation_mask"],
+    }
+    fields = {
+        "residual_magnitude": diagnostics["residual_mag"],
+        "wavefield_magnitude": diagnostics["wavefield_mag"],
+        "scattering_magnitude": diagnostics["a_scat_mag"],
+    }
+
+    with open(output_dir / "quantiles.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["field", "region", "q50", "q90", "q95", "q99", "q100"])
+        for field_name, values in fields.items():
+            for region_name, mask in regions.items():
+                subset = values[mask]
+                writer.writerow(
+                    [field_name, region_name]
+                    + [f"{np.quantile(subset, q):.16e}" for q in quantiles]
+                )
+
+
+def save_centerline_profiles(trainer, diagnostics, output_dir):
+    """Export central x/y profiles that are useful for quick spreadsheet plots."""
+    physical_y, physical_x = diagnostics["physical_slice"]
+    source_i = trainer.source.i_s
+    source_j = trainer.source.j_s
+
+    rows = []
+    for x_index, coord in enumerate(trainer.grid.x_coords[physical_x]):
+        j = x_index + trainer.grid.pml_width
+        rows.append({
+            "axis": "x",
+            "coord": coord,
+            "velocity": trainer.medium.velocity[source_i, j],
+            "wavefield_mag": diagnostics["wavefield_mag"][source_i, j],
+            "scattering_mag": diagnostics["a_scat_mag"][source_i, j],
+            "residual_mag": diagnostics["residual_mag"][source_i, j],
+            "loss_mask": trainer.loss_mask[source_i, j],
+        })
+
+    for y_index, coord in enumerate(trainer.grid.y_coords[physical_y]):
+        i = y_index + trainer.grid.pml_width
+        rows.append({
+            "axis": "y",
+            "coord": coord,
+            "velocity": trainer.medium.velocity[i, source_j],
+            "wavefield_mag": diagnostics["wavefield_mag"][i, source_j],
+            "scattering_mag": diagnostics["a_scat_mag"][i, source_j],
+            "residual_mag": diagnostics["residual_mag"][i, source_j],
+            "loss_mask": trainer.loss_mask[i, source_j],
+        })
+
+    with open(output_dir / "centerline_profiles.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "axis",
+                "coord",
+                "velocity",
+                "wavefield_mag",
+                "scattering_mag",
+                "residual_mag",
+                "loss_mask",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def save_diagnostic_csvs(trainer, diagnostics, output_dir):
+    """Persist grid-aligned CSVs that are convenient for external plotting."""
+    physical_y, physical_x = diagnostics["physical_slice"]
+
+    save_vector_csv(trainer.grid.x_coords[physical_x], output_dir / "x_coords_physical.csv")
+    save_vector_csv(trainer.grid.y_coords[physical_y], output_dir / "y_coords_physical.csv")
+    save_matrix_csv(trainer.medium.velocity[physical_y, physical_x], output_dir / "velocity_physical.csv")
+    save_matrix_csv(diagnostics["loss_mask"][physical_y, physical_x], output_dir / "loss_mask_physical.csv")
+    save_matrix_csv(diagnostics["a_scat_mag"][physical_y, physical_x], output_dir / "scattering_magnitude_physical.csv")
+    save_matrix_csv(diagnostics["wavefield_mag"][physical_y, physical_x], output_dir / "wavefield_magnitude_physical.csv")
+    save_matrix_csv(diagnostics["residual_mag"][physical_y, physical_x], output_dir / "residual_magnitude_physical.csv")
+
+
+def save_heatmap_figure(fields, output_path, source_xy):
+    """Render a list of heatmaps with a consistent layout."""
+    n_fields = len(fields)
+    n_cols = min(3, n_fields)
+    n_rows = (n_fields + n_cols - 1) // n_cols
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(4.5 * n_cols, 4.0 * n_rows))
+    axes = np.atleast_1d(axes).reshape(n_rows, n_cols)
+
+    for ax, (title, values, cmap) in zip(axes.flat, fields):
+        image = ax.imshow(values, origin="lower", cmap=cmap)
+        ax.scatter(source_xy[0], source_xy[1], c="cyan", s=18, marker="x", linewidths=1.5)
+        ax.set_title(title)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
+
+    for ax in axes.flat[n_fields:]:
+        ax.axis("off")
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=160)
+    plt.close(fig)
+
+
+def save_diagnostic_heatmaps(trainer, diagnostics, output_dir):
+    """Save field and residual heatmaps cropped to the physical domain."""
+    physical_y, physical_x = diagnostics["physical_slice"]
+    source_xy = (
+        trainer.source.j_s - trainer.grid.pml_width,
+        trainer.source.i_s - trainer.grid.pml_width,
+    )
+
+    velocity = trainer.medium.velocity[physical_y, physical_x]
+    scattering_mag = diagnostics["a_scat_mag"][physical_y, physical_x]
+    wavefield_mag = diagnostics["wavefield_mag"][physical_y, physical_x]
+    residual_real = diagnostics["residual_real"][physical_y, physical_x]
+    residual_imag = diagnostics["residual_imag"][physical_y, physical_x]
+    residual_mag = diagnostics["residual_mag"][physical_y, physical_x]
+    residual_log = np.log10(np.maximum(residual_mag, 1.0e-12))
+    rhs_log = np.log10(np.maximum(diagnostics["rhs_mag"][physical_y, physical_x], 1.0e-12))
+    mask = diagnostics["loss_mask"][physical_y, physical_x]
+
+    save_heatmap_figure(
+        [
+            ("Velocity", velocity, "viridis"),
+            ("|A_scat|", scattering_mag, "magma"),
+            ("|u_total|", wavefield_mag, "magma"),
+        ],
+        output_dir / "field_heatmaps.png",
+        source_xy,
+    )
+
+    save_heatmap_figure(
+        [
+            ("Residual Real", residual_real, "coolwarm"),
+            ("Residual Imag", residual_imag, "coolwarm"),
+            ("|Residual|", residual_mag, "inferno"),
+            ("log10 |Residual|", residual_log, "inferno"),
+            ("log10 |RHS_eq|", rhs_log, "plasma"),
+            ("Loss Mask", mask, "gray"),
+        ],
+        output_dir / "residual_heatmaps.png",
+        source_xy,
+    )
+
+
+def export_evaluation_artifacts(trainer, losses, output_dir):
+    """Compute and persist diagnostics for the current trainer state."""
+    diagnostics = compute_model_diagnostics(trainer)
+    metrics = compute_metric_bundle(losses, diagnostics)
+
+    save_metrics_csv(metrics, output_dir)
+    save_quantiles_csv(diagnostics, output_dir)
+    save_centerline_profiles(trainer, diagnostics, output_dir)
+    save_diagnostic_csvs(trainer, diagnostics, output_dir)
+    save_diagnostic_heatmaps(trainer, diagnostics, output_dir)
+
+    return metrics
+
+
+def evaluate_saved_run(run_dir, device="auto"):
+    """Load an existing run directory and regenerate diagnostics in-place."""
+    run_dir = Path(run_dir).resolve()
+    cfg_path = run_dir / "config_merged.yaml"
+    model_path = run_dir / "model_state.pt"
+    losses_path = run_dir / "losses.npy"
+
+    cfg = load_config(cfg_path)
+    configure_logging(cfg.logging.level)
+    trainer = Trainer(cfg, device=device)
+    state_dict = torch.load(model_path, map_location=trainer.device)
+    trainer.model.load_state_dict(state_dict)
+
+    losses = np.load(losses_path).astype(np.float64).tolist()
+    save_losses(losses, run_dir)
+    metrics = export_evaluation_artifacts(trainer, losses, run_dir)
+
+    summary = {}
+    summary_path = run_dir / "summary.json"
+    if summary_path.exists():
+        with open(summary_path, "r", encoding="utf-8") as f:
+            summary = json.load(f)
+    summary.update(metrics)
+    summary["output_dir"] = str(run_dir)
+    summary["device"] = str(trainer.device)
+    save_summary(summary, run_dir)
+    return summary
+
+
 def run_training(
     base_config,
     overlay_config=None,
@@ -148,6 +455,7 @@ def run_training(
     save_losses(losses, final_output_dir)
     save_wavefield(u_total, final_output_dir)
     save_model(trainer.model, final_output_dir)
+    metrics = export_evaluation_artifacts(trainer, losses, final_output_dir)
 
     summary = {
         "output_dir": str(final_output_dir),
@@ -158,6 +466,7 @@ def run_training(
         "velocity_model": cfg.medium.velocity_model,
         "grid_shape": [int(trainer.grid.ny_total), int(trainer.grid.nx_total)],
     }
+    summary.update(metrics)
     save_summary(summary, final_output_dir)
 
     return summary
