@@ -154,3 +154,47 @@ class TestGodunovManufactured:
             grad_sq[mask], s0 ** 2, atol=0.01,
             err_msg="Eikonal equation |∇τ|²=s² violated"
         )
+
+
+class TestEikonalHeterogeneous:
+    """Test FSM with smooth_lens heterogeneous medium."""
+
+    @pytest.fixture
+    def lens_setup(self):
+        cfg = load_config(
+            Path(__file__).parent.parent / "configs" / "base.yaml",
+            Path(__file__).parent.parent / "configs" / "debug.yaml",
+        )
+        cfg.medium.velocity_model = "smooth_lens"
+        grid = Grid2D(cfg)
+        medium = Medium2D(grid, cfg)
+        source = PointSource(grid, cfg)
+        bg = BackgroundField(grid, medium, source, cfg.physics.omega)
+        solver = EikonalSolver(grid, medium, source, bg, cfg)
+        return solver, grid, medium, source
+
+    def test_lens_alpha_deviates_from_one(self, lens_setup):
+        """smooth_lens 介质 alpha 应偏离 1。"""
+        solver, _, _, _ = lens_setup
+        finite = np.isfinite(solver.alpha)
+        assert np.max(np.abs(solver.alpha[finite] - 1.0)) > 0.01
+
+    def test_lens_convergence(self, lens_setup):
+        """smooth_lens FSM 应收敛。"""
+        solver, _, _, _ = lens_setup
+        assert solver.converged_iter < 20
+
+    def test_lens_no_nan(self, lens_setup):
+        """finite 区域无 NaN。"""
+        solver, _, _, _ = lens_setup
+        finite = np.isfinite(solver.alpha)
+        assert not np.any(np.isnan(solver.alpha[finite]))
+
+    def test_lens_tau_positive(self, lens_setup):
+        """τ 在远离震源处应为正。"""
+        solver, _, _, source = lens_setup
+        si, sj = source.i_s, source.j_s
+        mask = np.ones_like(solver.tau, dtype=bool)
+        mask[max(0, si - 2):si + 3, max(0, sj - 2):sj + 3] = False
+        finite_mask = np.isfinite(solver.tau) & mask
+        assert np.all(solver.tau[finite_mask] > 0)
