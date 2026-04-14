@@ -22,7 +22,7 @@ class Medium2D:
 
     Attributes:
         c_background: 背景波速。
-        s0: 背景慢度 = 1/c_background。
+        s0: 震源处慢度 s(x_s)。
         velocity: 波速场 [ny_total, nx_total]。
         slowness: 慢度场 [ny_total, nx_total]。
         slowness_t: 慢度场 torch 张量。
@@ -32,10 +32,10 @@ class Medium2D:
         """
         Args:
             grid: Grid2D 实例。
-            cfg: Config 对象，需包含 cfg.medium.{c_background, velocity_model}。
+            cfg: Config 对象，需包含 cfg.medium.{c_background, velocity_model}
+                 和 cfg.physics.source_pos。
         """
         self.c_background = cfg.medium.c_background
-        self.s0 = 1.0 / self.c_background
         self.grid = grid
 
         model = cfg.medium.velocity_model
@@ -48,9 +48,16 @@ class Medium2D:
         else:
             raise ValueError(f"未知速度模型: {model}")
 
-        # PML 退化 (D6d)：PML 层内强制 c = c_background
+        # 先从原始速度场提取震源处慢度 s0 = s(x_s)
+        # （PML 退化之前，确保取到真实介质值）
+        src_pos = cfg.physics.source_pos
+        j_s = round((src_pos[0] - grid.x_min) / grid.h) + grid.pml_width
+        i_s = round((src_pos[1] - grid.y_min) / grid.h) + grid.pml_width
+        self.s0 = 1.0 / velocity[i_s, j_s]
+
+        # PML 退化 (D6d)：PML 层内强制 c = 1/s0（震源处速度）
         pml_mask = grid.pml_mask()
-        velocity[pml_mask] = self.c_background
+        velocity[pml_mask] = 1.0 / self.s0
 
         self.velocity = velocity
         self.slowness = 1.0 / velocity

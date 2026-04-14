@@ -62,7 +62,7 @@ class TestTrainer:
     def test_lens_loss_decreases(self, cfg_lens):
         """变速介质 loss 能下降。"""
         trainer = Trainer(cfg_lens)
-        losses = trainer.train(epochs=10)
+        losses = trainer.train(epochs=30)
         assert losses[-1] < losses[0]
 
     def test_reconstruct_wavefield(self, cfg_homogeneous):

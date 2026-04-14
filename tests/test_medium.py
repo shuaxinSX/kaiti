@@ -51,12 +51,32 @@ class TestMediumPmlDegradation:
             err_msg="PML region slowness should degrade to s0 = 1/c_background",
         )
 
-    def test_pml_velocity_equals_c_background(self, grid, medium):
+    def test_pml_velocity_equals_1_over_s0(self, grid, medium):
         pml_mask = grid.pml_mask()
         pml_velocity = medium.velocity[pml_mask]
         np.testing.assert_allclose(
-            pml_velocity, medium.c_background, atol=1e-14,
-            err_msg="PML region velocity should degrade to c_background",
+            pml_velocity, 1.0 / medium.s0, atol=1e-14,
+            err_msg="PML region velocity should degrade to 1/s0",
+        )
+
+
+class TestMediumS0Heterogeneous:
+    """测试非均匀介质 s0 = s(x_s) 正确。"""
+
+    def test_smooth_lens_s0(self, grid, cfg):
+        """smooth_lens 震源在中心，速度 > c_background，所以 s0 < 1/c_background。"""
+        cfg.medium.velocity_model = "smooth_lens"
+        medium = Medium2D(grid, cfg)
+        # 震源在 (0.5, 0.5) 即透镜中心，速度有正扰动
+        assert medium.s0 < 1.0 / cfg.medium.c_background
+
+    def test_pml_degrades_to_s0_lens(self, grid, cfg):
+        """smooth_lens 下 PML 退化到 s0（非 1/c_background）。"""
+        cfg.medium.velocity_model = "smooth_lens"
+        medium = Medium2D(grid, cfg)
+        pml_mask = grid.pml_mask()
+        np.testing.assert_allclose(
+            medium.slowness[pml_mask], medium.s0, atol=1e-14,
         )
 
 
