@@ -1,0 +1,35 @@
+# Recommended for the existing GPU-enabled environment:
+#   D:\anaconda3\envs\SX\python.exe -m pip install scipy pyyaml matplotlib pytest pytest-cov tqdm
+#   D:\anaconda3\envs\SX\python.exe -m pip install -e .
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "helmholtz-nsno-2d"
+version = "0.1.0"
+description = "2D Helmholtz neural scattering operator prototype."
+readme = "README.md"
+requires-python = ">=3.9,<3.10"
+dependencies = [
+    "numpy>=1.24,<2.0",
+    "scipy>=1.10,<2.0",
+    "PyYAML>=6.0,<7.0",
+    "matplotlib>=3.7,<4.0",
+    "torch>=2.7,<2.8",
+    "tqdm>=4.65,<5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0,<9.0",
+    "pytest-cov>=4.0,<6.0",
+]
+
+[project.scripts]
+helmholtz-train = "src.train.runner:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
