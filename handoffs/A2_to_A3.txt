@@ -1,0 +1,21 @@
+[A2 -> A3 LABEL HANDOFF]
+reference label file:
+- reference_envelope.npy
+
+format:
+- complex array
+- shape: [H, W]
+- full grid including PML
+- semantic: scattering envelope A_ref
+
+secondary artifact:
+- reference_wavefield.npy
+- semantic: total wavefield u_ref, for evaluation/visualization only
+
+mask convention for metrics:
+- evaluation_mask = physical_mask & loss_mask
+
+do not assume:
+- file is already dual-channel
+- file is cropped to physical domain
+- Config has .get(); use attribute access or to_dict()

@@ -1,0 +1,41 @@
+[A2 -> A4 DOC HANDOFF]
+Generate reference from config:
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  python scripts/solve_reference.py \
+    --config configs/base.yaml \
+    --overlay configs/debug.yaml \
+    --device cpu \
+    --velocity-model smooth_lens \
+    --output-dir <dir>
+
+Add reference evaluation to existing run:
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  python scripts/solve_reference.py \
+    --run-dir <run_dir> \
+    --device cpu
+
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  python scripts/evaluate_run.py \
+    --run-dir <run_dir> \
+    --device cpu
+
+Reference artifacts:
+- reference_envelope.npy
+- reference_wavefield.npy
+- reference_metrics.json
+- reference_comparison.csv
+- reference_error_heatmaps.png
+
+Reference metrics:
+- reference_available
+- rel_l2_to_reference
+- amp_mae_to_reference
+- phase_mae_to_reference
+- reference_residual_rmse
+- reference_residual_max
+
+Important notes:
+- reference default regression tests use debug-scale grids
+- run_training default path does not automatically solve reference
+- reference comparison is evaluated on evaluation_mask = physical_mask & loss_mask
+- config-mode does not generate comparison csv/heatmap because no model prediction is present

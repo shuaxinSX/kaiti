@@ -1,0 +1,49 @@
+[A2 -> A0 HANDOFF]
+branch: feat/reference-eval
+base_commit: 5904d04
+final_commit: 2933b9c
+
+files_changed:
+- src/eval/reference_eval.py
+- src/eval/__init__.py
+- scripts/solve_reference.py
+- src/train/runner.py
+- tests/test_reference_solver.py
+
+standard_outputs_added:
+- reference_envelope.npy
+- reference_wavefield.npy
+- reference_metrics.json
+- reference_comparison.csv
+- reference_error_heatmaps.png
+
+summary_keys_added:
+- reference_available
+- rel_l2_to_reference
+- amp_mae_to_reference
+- phase_mae_to_reference
+- reference_residual_rmse
+- reference_residual_max
+
+runner_change_scope:
+- evaluate_saved_run only
+- run_training default behavior changed: no
+
+commands_run:
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_reference_solver.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q
+- python scripts/solve_reference.py --help
+- solve_reference.py config-mode homogeneous
+- solve_reference.py config-mode smooth_lens
+- 1-epoch train smoke
+- solve_reference.py run-dir mode
+- evaluate_run.py run-dir mode
+
+result:
+- all passed
+
+notes_for_integrator:
+- config-only mode intentionally writes only reference_envelope.npy, reference_wavefield.npy, reference_metrics.json
+- comparison files are only generated when a model prediction is available in run-dir mode
+- reference metrics are computed on evaluation_mask = physical_mask & loss_mask
+- reference baseline is discrete-consistency truth under the current operator, not an external analytic truth

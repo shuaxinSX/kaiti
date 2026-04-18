@@ -1,0 +1,15 @@
+[A2 -> A5 AUDIT HANDOFF]
+reference residual metrics:
+- reference_residual_rmse
+- reference_residual_max
+
+calculation region:
+- evaluation_mask = physical_mask & loss_mask
+
+semantic note:
+- reference is assembled from the current discrete operator and solved by sparse linear solve
+- it is a discrete consistency baseline, not an external continuous closed-form truth
+
+practical note:
+- debug + homogeneous currently gives zero reference envelope and zero reference residual
+- debug + smooth_lens currently gives reference_residual_rmse ~= 7.21e-08 and reference_residual_max ~= 2.62e-07
