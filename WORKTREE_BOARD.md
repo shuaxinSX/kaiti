@@ -505,12 +505,12 @@ helmholtz-train \
 
 | ID | 分支                       | worktree      | 阶段      | 目标                                            | 依赖               | 合并顺序 | 状态 |
 | -- | ------------------------ | ------------- | ------- | --------------------------------------------- | ---------------- | ---: | -- |
-| A0 | `int/multi-agent`        | `../wt/int`   | 全程      | 集成、merge、冲突修复、统一 smoke                        | 基线快照             |    - | ⬜  |
-| A1 | `feat/packaging-ci`      | `../wt/pkg`   | Phase 1 | `pip install -e .`、去掉脚本 path hack、加最小 CI      | 无                |    1 | ⬜  |
-| A2 | `feat/reference-eval`    | `../wt/ref`   | Phase 1 | 接入 `reference_solver`，建立参考评估基线                | 建议 A1 先合         |    3 | ⬜  |
-| A3 | `feat/hybrid-loss`       | `../wt/train` | Phase 2 | 打通 `loss_data` / `lambda_data` 监督混合训练         | A2               |    4 | ⬜  |
+| A0 | `int/multi-agent`        | `../wt/int`   | 全程      | 集成、merge、冲突修复、统一 smoke                        | 基线快照             |    - | 🟡  |
+| A1 | `feat/packaging-ci`      | `../wt/pkg`   | Phase 1 | `pip install -e .`、去掉脚本 path hack、加最小 CI      | 无                |    1 | ✅  |
+| A2 | `feat/reference-eval`    | `../wt/ref`   | Phase 1 | 接入 `reference_solver`，建立参考评估基线                | 建议 A1 先合         |    3 | ✅  |
+| A3 | `feat/hybrid-loss`       | `../wt/train` | Phase 2 | 打通 `loss_data` / `lambda_data` 监督混合训练         | A2               |    4 | 🟢  |
 | A4 | `chore/project-state`    | `../wt/docs`  | Phase 1 | 更新 README / CHANGELOG / PROJECT_STATE / BOARD | 无                |    2 | ⬜  |
-| A5 | `fix/residual-pml-audit` | `../wt/phys`  | Phase 2 | 审计并可选修正 PML 下 `Δ̃τ` 处理                        | A2 已稳定           |    5 | ⬜  |
+| A5 | `fix/residual-pml-audit` | `../wt/phys`  | Phase 2 | 审计并可选修正 PML 下 `Δ̃τ` 处理                        | A2 已稳定           |    5 | 🟢  |
 | A6 | `exp/benchmark-matrix`   | `../wt/exp`   | Phase 3 | 运行小型实验矩阵并输出报告                                 | A1+A2+A3(+A5 可选) |    6 | ⬜  |
 
 ---
@@ -788,14 +788,14 @@ python scripts/evaluate_run.py \
 
 ### 11.8 任务清单
 
-* [ ] 新建 `scripts/solve_reference.py` CLI 脚本
-* [ ] 能从配置直接生成参考解
-* [ ] 能从已有 `run_dir` 复用配置生成参考解
-* [ ] 新建 `tests/test_reference_solver.py`
-* [ ] `runner.py` 中的 `evaluate_saved_run()` 能识别并导出参考误差
-* [ ] 对 `homogeneous` 做零散射 sanity check
-* [ ] 对 `smooth_lens` 做 reference residual 检查
-* [ ] 新增产物文件名加入测试断言
+* [x] 新建 `scripts/solve_reference.py` CLI 脚本
+* [x] 能从配置直接生成参考解
+* [x] 能从已有 `run_dir` 复用配置生成参考解
+* [x] 新建 `tests/test_reference_solver.py`
+* [x] `runner.py` 中的 `evaluate_saved_run()` 能识别并导出参考误差
+* [x] 对 `homogeneous` 做零散射 sanity check
+* [x] 对 `smooth_lens` 做 reference residual 检查
+* [x] 新增产物文件名加入测试断言
 
 ### 11.9 与 runner 的协作规则
 
@@ -809,12 +809,12 @@ python scripts/evaluate_run.py \
 
 ### 11.10 验收标准
 
-* [ ] `scripts/solve_reference.py` 能独立运行
-* [ ] `tests/test_reference_solver.py` 通过
-* [ ] 现有 `evaluate_saved_run()` 能识别并导出参考误差
-* [ ] 对 `homogeneous`，参考散射包络在物理区接近 0
-* [ ] 将参考解代回当前算子后 residual 显著小于未训练网络输出
-* [ ] 全部现有测试不回归
+* [x] `scripts/solve_reference.py` 能独立运行
+* [x] `tests/test_reference_solver.py` 通过
+* [x] 现有 `evaluate_saved_run()` 能识别并导出参考误差
+* [x] 对 `homogeneous`，参考散射包络在物理区接近 0
+* [x] 将参考解代回当前算子后 residual 显著小于未训练网络输出
+* [x] 全部现有测试不回归
 
 ---
 
@@ -1161,9 +1161,11 @@ A4 需要修正的已知偏差：
 
 ### 16.5 Gate 3 — 参考解基线建立
 
-* [ ] A2 合并
-* [ ] reference solver 有脚本、有测试、有指标
-* [ ] runner 可导出参考误差
+* [x] A2 合并
+* [x] reference solver 有脚本、有测试、有指标
+* [x] runner 可导出参考误差
+
+Gate 3 已开启。A3 与 A5 现在可以基于 `int/multi-agent` 中的 reference 基线并行开工。
 
 ### 16.6 Gate 4 — 训练闭环建立
 
@@ -1268,27 +1270,27 @@ git merge int/multi-agent
 
 ### 20.1 A0 Integrator
 
-* 状态：`TODO`
-* Owner：
-* 最近更新：
+* 状态：`INTEGRATING`
+* Owner：`A0 / Codex`
+* 最近更新：`2026-04-18` 已合并并推送 A1、A2 到 `int/multi-agent`；当前集成头为 `e333678`
 
 ### 20.2 A1 Packaging / CI
 
-* 状态：`TODO`
-* Owner：
-* 最近更新：
+* 状态：`MERGED`
+* Owner：`A1 / Codex`
+* 最近更新：`2026-04-18` A1 已完成 DoD、本地验证通过并合入 `int/multi-agent`
 
 ### 20.3 A2 Reference / Eval
 
-* 状态：`TODO`
-* Owner：
-* 最近更新：
+* 状态：`MERGED`
+* Owner：`A2 / Codex`
+* 最近更新：`2026-04-18` A2 已完成 DoD，`scripts/solve_reference.py`、reference 产物、summary 键、专项测试与 handoff 已合入 `int/multi-agent`
 
 ### 20.4 A3 Hybrid Loss
 
-* 状态：`TODO`
+* 状态：`READY`
 * Owner：
-* 最近更新：
+* 最近更新：`2026-04-18` A2 已 merged，reference 标签与指标基线已就位，可开工
 
 ### 20.5 A4 Docs / Project State
 
@@ -1298,9 +1300,9 @@ git merge int/multi-agent
 
 ### 20.6 A5 Residual / PML Audit
 
-* 状态：`WAITING_GATE_3`
+* 状态：`READY`
 * Owner：
-* 最近更新：
+* 最近更新：`2026-04-18` A2 已 merged，reference residual 基线已建立，可开工
 
 ### 20.7 A6 Experiment Matrix
 
