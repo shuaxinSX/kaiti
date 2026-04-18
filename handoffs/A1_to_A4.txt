@@ -1,0 +1,29 @@
+[A1 -> A4 DOC HANDOFF]
+Install:
+  pip install -e ".[dev]"
+
+Test:
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q
+
+Train:
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  helmholtz-train \
+    --overlay configs/debug.yaml \
+    --device cpu \
+    --epochs 1 \
+    --velocity-model smooth_lens \
+    --output-dir outputs/integration_a1_smoke
+
+Evaluate:
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  python scripts/evaluate_run.py \
+    --run-dir outputs/integration_a1_smoke \
+    --device cpu
+
+Important notes:
+- running scripts now assumes the project has been installed
+- no PYTHONPATH=. needed
+- requirements.txt is now only a compatibility wrapper around pyproject.toml
+- multi-overlay support: yes
+- overlay merge order is left to right
+- Config does not provide .get()
