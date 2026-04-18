@@ -19,6 +19,7 @@ import torch
 import yaml
 
 from src.config import load_config
+from src.eval import export_reference_artifacts
 from src.train.trainer import Trainer
 
 matplotlib.use("Agg")
@@ -412,6 +413,11 @@ def evaluate_saved_run(run_dir, device="auto"):
     losses = np.load(losses_path).astype(np.float64).tolist()
     save_losses(losses, run_dir)
     metrics = export_evaluation_artifacts(trainer, losses, run_dir)
+    reference_metrics = export_reference_artifacts(
+        trainer,
+        run_dir,
+        predicted_envelope=compute_model_diagnostics(trainer)["a_scat"],
+    )
 
     summary = {}
     summary_path = run_dir / "summary.json"
@@ -419,6 +425,7 @@ def evaluate_saved_run(run_dir, device="auto"):
         with open(summary_path, "r", encoding="utf-8") as f:
             summary = json.load(f)
     summary.update(metrics)
+    summary.update(reference_metrics)
     summary["output_dir"] = str(run_dir)
     summary["device"] = str(trainer.device)
     save_summary(summary, run_dir)
