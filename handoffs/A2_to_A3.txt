@@ -18,4 +18,5 @@ mask convention for metrics:
 do not assume:
 - file is already dual-channel
 - file is cropped to physical domain
-- Config has .get(); use attribute access or to_dict()
+
+Config has no .get(); use attribute access or to_dict().

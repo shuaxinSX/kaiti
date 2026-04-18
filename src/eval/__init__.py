@@ -8,6 +8,7 @@ eval 子包 — 评估与参考解
 
 from src.eval.reference_eval import (
     REFERENCE_SUMMARY_KEYS,
+    compute_prediction_envelope,
     export_reference_artifacts,
     solve_reference_from_config,
     solve_reference_from_run_dir,
@@ -17,6 +18,7 @@ from src.eval.reference_solver import assemble_reference_operator, solve_referen
 __all__ = [
     "REFERENCE_SUMMARY_KEYS",
     "assemble_reference_operator",
+    "compute_prediction_envelope",
     "export_reference_artifacts",
     "solve_reference_from_config",
     "solve_reference_from_run_dir",

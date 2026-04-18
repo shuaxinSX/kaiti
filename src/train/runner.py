@@ -19,7 +19,7 @@ import torch
 import yaml
 
 from src.config import load_config
-from src.eval import export_reference_artifacts
+from src.eval import compute_prediction_envelope, export_reference_artifacts
 from src.train.trainer import Trainer
 
 matplotlib.use("Agg")
@@ -416,7 +416,7 @@ def evaluate_saved_run(run_dir, device="auto"):
     reference_metrics = export_reference_artifacts(
         trainer,
         run_dir,
-        predicted_envelope=compute_model_diagnostics(trainer)["a_scat"],
+        predicted_envelope=compute_prediction_envelope(trainer),
     )
 
     summary = {}
