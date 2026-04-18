@@ -1,6 +1,5 @@
-# Recommended for the existing GPU-enabled environment:
-#   D:\anaconda3\envs\SX\python.exe -m pip install scipy pyyaml matplotlib pytest pytest-cov tqdm
-#   D:\anaconda3\envs\SX\python.exe -m pip install -e .
+# Source of truth for packaging and dependency installation.
+# Recommended install path: `pip install -e ".[dev]"`.
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]

@@ -85,13 +85,13 @@ class Config:
 
 def load_config(
     base_path: Union[str, Path],
-    overlay_path: Optional[Union[str, Path]] = None,
+    *overlay_paths: Optional[Union[str, Path]],
 ) -> Config:
     """加载配置文件。
 
     Args:
         base_path: 基础配置文件路径（通常为 configs/base.yaml）。
-        overlay_path: 可选的覆盖配置文件路径（如 configs/debug.yaml）。
+        overlay_paths: 可选的覆盖配置文件路径，按从左到右顺序依次合并。
 
     Returns:
         Config 对象，支持属性访问。
@@ -109,7 +109,10 @@ def load_config(
 
     logger.info("已加载基础配置: %s", base_path)
 
-    if overlay_path is not None:
+    for overlay_path in overlay_paths:
+        if overlay_path is None:
+            continue
+
         overlay_path = Path(overlay_path)
         if not overlay_path.exists():
             raise FileNotFoundError(f"覆盖配置文件不存在: {overlay_path}")

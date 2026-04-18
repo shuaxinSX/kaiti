@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Import and CLI smoke
+        run: |
+          python -c "import src; from src.train.runner import main; print('import-ok')"
+          helmholtz-train --help
+          python scripts/run_train.py --help
+          python scripts/evaluate_run.py --help
+
+      - name: Test suite
+        run: pytest -q
+
+      - name: Training and evaluation smoke
+        run: |
+          rm -rf ci_runs/train_1ep
+          helmholtz-train \
+            --overlay configs/debug.yaml \
+            --device cpu \
+            --epochs 1 \
+            --velocity-model smooth_lens \
+            --output-dir ci_runs/train_1ep
+          python scripts/evaluate_run.py \
+            --run-dir ci_runs/train_1ep \
+            --device cpu
