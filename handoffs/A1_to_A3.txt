@@ -1,0 +1,15 @@
+[A1 -> A3 CONFIG STATUS]
+load_config multi-overlay support: yes
+accepted calling pattern:
+- load_config(base)
+- load_config(base, overlay)
+- load_config(base, overlay1, overlay2, ...)
+- load_config(base, None, overlay1, overlay2, ...)
+
+merge order:
+- overlays are applied left to right
+
+compatibility notes:
+- None overlays are skipped safely
+- Config still has no .get()
+- A3 should rely on attribute access and/or to_dict(), not dict-style helpers

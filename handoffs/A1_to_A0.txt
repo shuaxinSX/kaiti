@@ -1,0 +1,41 @@
+[A1 -> A0 HANDOFF]
+branch: feat/packaging-ci
+base_commit: 33a385e
+final_commit: 83a9c9c
+
+files_changed:
+- pyproject.toml
+- requirements.txt
+- scripts/run_train.py
+- scripts/evaluate_run.py
+- src/config.py
+- tests/test_config.py
+- .github/workflows/ci.yml
+
+packaging_decision:
+- pyproject.toml is the single source of truth: yes
+- requirements.txt reduced to compatibility wrapper: yes
+- multi-overlay support added in src/config.py: yes
+
+commands_run:
+- /opt/homebrew/bin/python3.9 -m venv .venv
+- pip install -e ".[dev]"
+- pip install -r requirements.txt
+- python -c "import src; from src.train.runner import main; print('import-ok')"
+- helmholtz-train --help
+- python scripts/run_train.py --help
+- python scripts/evaluate_run.py --help
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 helmholtz-train --overlay configs/debug.yaml --device cpu --epochs 1 --velocity-model smooth_lens --output-dir outputs/integration_a1_smoke
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python scripts/evaluate_run.py --run-dir outputs/integration_a1_smoke --device cpu
+
+result:
+- all passed
+
+notes_for_integrator:
+- running scripts now assumes the project has already been installed into the active environment
+- no PYTHONPATH=. is required
+- no new evaluate CLI entrypoint was added; evaluation remains python scripts/evaluate_run.py
+- load_config now accepts load_config(base, overlay1, overlay2, ...) and skips None overlays
+- Config still does not implement .get() or other dict-like helper methods
+- no physics semantics, training semantics, output filenames, or summary keys were changed
