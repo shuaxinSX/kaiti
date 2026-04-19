@@ -16,7 +16,6 @@ PDE 残差计算器
 """
 
 import torch
-import numpy as np
 
 
 class ResidualComputer:
@@ -25,7 +24,17 @@ class ResidualComputer:
     使用复数张量正确处理 PML 区域的复坐标拉伸。
     """
 
-    def __init__(self, grid, pml, tau_d, rhs, loss_mask, omega, diff_ops):
+    def __init__(
+        self,
+        grid,
+        pml,
+        tau_d,
+        rhs,
+        loss_mask,
+        omega,
+        diff_ops,
+        lap_tau_mode="mixed_legacy",
+    ):
         """
         Args:
             grid: Grid2D 实例。
@@ -38,6 +47,7 @@ class ResidualComputer:
         """
         self.omega = omega
         self.diff_ops = diff_ops
+        self.lap_tau_mode = self._validate_lap_tau_mode(lap_tau_mode)
 
         # PML 系数保持 complex（不取 real）
         self.A_x = pml.A_x_t.cfloat()  # [H, W] complex64
@@ -49,18 +59,6 @@ class ResidualComputer:
         self.grad_tau_x = tau_d.grad_tau_x.float()
         self.grad_tau_y = tau_d.grad_tau_y.float()
 
-        # 预计算 PML 拉伸后的走时拉普拉斯 Δ̃τ（复数）
-        # Δ̃τ = A_x · τ_xx − B_x · τ_x + A_y · τ_yy − B_y · τ_y
-        tau_for_diff = tau_d.grad_tau_x.double()  # 取不到 tau 本身的数值差分
-        # 需要对 tau = tau0 * alpha 做数值差分来得到 τ_xx 等
-        # 但 D4 禁止直接对 tau 做二阶差分！
-        # 正确方法：Δ̃τ 也用链式法则重组在复坐标下
-        # Δ̃τ = Δ̃(τ₀·α) = α·Δ̃τ₀ + 2·∇̃τ₀·∇̃α + τ₀·Δ̃α
-        # 其中 Δ̃f = A_x·f_xx - B_x·f_x + A_y·f_yy - B_y·f_y
-        # τ₀ 和 α 的导数已有，只需用 PML 系数加权
-
-        # 不需要在 init 里预计算 Δ̃τ（太复杂），改为在 compute 中分项处理
-
         # 阻尼池解耦系数 (D7): (∂ξτ)²·(1 − 1/γξ²) — 保持复数
         gamma_x_t = torch.from_numpy(pml.gamma_x).cfloat()
         gamma_y_t = torch.from_numpy(pml.gamma_y).cfloat()
@@ -69,9 +67,7 @@ class ResidualComputer:
             + tau_d.grad_tau_y.cfloat() ** 2 * (1.0 - 1.0 / gamma_y_t ** 2)
         )
 
-        # 预计算 PML 拉伸的 Δ̃τ（链式法则 + PML 系数）
-        # 这里需要: lap_tau0 (解析), grad_tau0 (解析), grad_alpha/lap_alpha (数值)
-        # alpha, tau0 来自上游
+        # 预计算 legacy / candidate 两套 Δ̃τ 缓存，并激活当前 mode。
         self._precompute_pml_lap_tau(pml, tau_d, diff_ops)
 
         # RHS 转为复数张量
@@ -80,6 +76,21 @@ class ResidualComputer:
         # 掩码
         self.loss_mask = torch.from_numpy(loss_mask).float()
         self.device = torch.device("cpu")
+
+    def _validate_lap_tau_mode(self, lap_tau_mode):
+        valid_modes = ("mixed_legacy", "stretched_divergence")
+        if lap_tau_mode not in valid_modes:
+            raise ValueError(
+                f"Unsupported lap_tau_mode={lap_tau_mode!r}. "
+                f"Expected one of {valid_modes}."
+            )
+        return lap_tau_mode
+
+    def _activate_lap_tau_mode(self):
+        if self.lap_tau_mode == "mixed_legacy":
+            self.lap_tau_c = self.lap_tau_legacy_c
+        else:
+            self.lap_tau_c = self.lap_tau_candidate_c
 
     def to(self, device):
         """Move cached tensors to the requested device."""
@@ -94,12 +105,15 @@ class ResidualComputer:
             "damp_coeff",
             "grad_tau_x_stretched",
             "grad_tau_y_stretched",
+            "lap_tau_legacy_c",
+            "lap_tau_candidate_c",
             "lap_tau_c",
             "rhs_c",
             "loss_mask",
         )
         for name in tensor_names:
             setattr(self, name, getattr(self, name).to(self.device))
+        self._activate_lap_tau_mode()
         return self
 
     def _precompute_pml_lap_tau(self, pml, tau_d, diff_ops):
@@ -116,28 +130,21 @@ class ResidualComputer:
         self.grad_tau_x_stretched = self.A_x * tau_d.grad_tau_x.cfloat()
         self.grad_tau_y_stretched = self.A_y * tau_d.grad_tau_y.cfloat()
 
-        # Δ̃τ：直接用存好的 lap_tau（这是未拉伸版本）
-        # 在物理区 A=1,B=0 所以 Δ̃τ = Δτ（链式法则结果已正确）
-        # 在 PML 区需要修正。严格做法：重新用 PML 系数对各项加权
-        # lap_tau = alpha*lap_tau0 + 2*(grad_tau0·grad_alpha) + tau0*lap_alpha
-        # Δ̃τ 中每一项的二阶/一阶差分都需要 PML 系数
+        # legacy baseline：未拉伸 lap_tau 与已拉伸输运项混用。
+        self.lap_tau_legacy_c = tau_d.lap_tau.cfloat()
 
-        # 用预存的分量重新组装 PML 版本
-        # 对 τ₀ (解析已知，不需差分):
-        #   Δ̃τ₀ = Δτ₀ (τ₀ 的拉普拉斯只在震源处有 1/r 奇点，已由掩码处理)
-        #   因为 τ₀ = s₀·r，其空间导数是解析的，PML 拉伸意义下
-        #   Δ̃τ₀ = A_x·(∂xxτ₀) - B_x·(∂xτ₀) + A_y·(∂yyτ₀) - B_y·(∂yτ₀)
-        #   但 τ₀ 的二阶解析导数复杂，这里采用简化策略：
-        #   物理区 PML 系数 =1/0 所以无差异；PML 区 RHS=0 且有掩码，
-        #   等效体源和输运项对 loss 贡献可忽略。
-        #   因此对 lap_tau 只需用存好的未拉伸版本，PML 区误差被掩码抑制。
-
-        # 实际上更正确的做法：在 PML 区用数值方法计算 Δ̃τ
-        # 但由于 D6d 保证 PML 内 s=s0 → perturbation=0 → RHS=0
-        # 且 PML 内波场应衰减到机器精度，所以 PML 区残差贡献极小
-        # 当前采用未拉伸 lap_tau + PML 拉伸修正输运项的混合策略
-
-        self.lap_tau_c = tau_d.lap_tau.cfloat()
+        # A5 审计候选：对安全重组后的 grad_tau 再施加 stretched divergence。
+        grad_tau_xx = diff_ops.diff_x(tau_d.grad_tau_x).squeeze().cfloat()
+        grad_tau_yy = diff_ops.diff_y(tau_d.grad_tau_y).squeeze().cfloat()
+        grad_tau_x_c = tau_d.grad_tau_x.cfloat()
+        grad_tau_y_c = tau_d.grad_tau_y.cfloat()
+        self.lap_tau_candidate_c = (
+            self.A_x * grad_tau_xx
+            - self.B_x * grad_tau_x_c
+            + self.A_y * grad_tau_yy
+            - self.B_y * grad_tau_y_c
+        )
+        self._activate_lap_tau_mode()
 
     def compute(self, A_scat_dual):
         """计算 PDE 残差和 L_pde。

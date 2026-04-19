@@ -1,0 +1,31 @@
+[A5 -> A4 DOC HANDOFF]
+New residual audit mode:
+- ResidualComputer(..., lap_tau_mode="mixed_legacy")
+
+Supported mode names:
+- mixed_legacy
+- stretched_divergence
+
+Default behavior:
+- default remains mixed_legacy
+- trainer / runner / CLI behavior is unchanged because no public config or CLI switch was added
+
+Meaning of the two modes:
+- mixed_legacy: stretched grad_tau transport term + unstretched lap_tau term
+- stretched_divergence: A5 audit candidate that applies stretched divergence to the safe grad_tau reconstruction
+
+Key conclusion to document:
+- stretched_divergence is useful as an audit mode, but it should not replace mixed_legacy as the project default yet
+- reason: on debug + smooth_lens it is self-consistent under its own operator, but differs from legacy by about 0.51 relative L2 even on evaluation/physical regions, not just inside PML
+
+Reference audit numbers:
+- rel_l2_eval = 0.5084495064331273
+- rel_l2_whole = 0.5102330279464612
+- rel_l2_pml = 0.5222063136504866
+- self_loss_legacy = 3.2707370459342548e-15
+- self_loss_candidate = 2.763710535246119e-15
+- cross_loss_candidate_on_legacy = 0.0006041940650902689
+- cross_loss_legacy_on_candidate = 0.000848872063215822
+
+Usage note:
+- current mode switching is programmatic only; no YAML field and no CLI flag were added in this branch
