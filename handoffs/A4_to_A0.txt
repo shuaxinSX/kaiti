@@ -1,0 +1,48 @@
+[A4 -> A0 HANDOFF]
+branch: chore/project-state
+base_commit: b80dc88
+implementation_commits:
+- 5563ac9 docs: add PROJECT_STATE snapshot for integrated baseline
+- 3d788f9 docs(readme): sync quickstart and milestones to integrated baseline
+- 7ca791f docs(changelog): capture M0-M9 baseline and A1-A3 integration
+- efdf233 docs(dev-plan): mark completed milestones on integrated baseline
+
+files_changed:
+- PROJECT_STATE.md           (new)
+- README.md                  (rewritten to integrated baseline)
+- CHANGELOG.md               (Unreleased section rebuilt)
+- DEV_PLAN.md                (M0-M9 checkboxes ticked with evidence refs; Q1-Q8 frozen, Q7/Q9/Q10 rerouted)
+- handoffs/A4_to_A0.txt      (this file)
+
+scope_respected:
+- did NOT touch WORKTREE_BOARD.md
+- did NOT touch pyproject.toml, requirements.txt
+- did NOT touch src/**, tests/**, configs/**, scripts/**, .github/**
+- did NOT rewrite DEV_PLAN.md section 3 (frozen decisions) or section 12 (anti-NaN checklist)
+
+docs_invariants:
+- artifact list in PROJECT_STATE.md §5.1 matches exactly what tests/test_runner.py asserts (20 files)
+- PROJECT_STATE.md §5.2 names the two exported-but-unlocked CSVs (loss_mask_physical.csv, scattering_magnitude_physical.csv)
+- reference summary keys quoted verbatim from src/eval/reference_eval.REFERENCE_SUMMARY_KEYS
+
+verification:
+- cat-inspected all four doc files after write; no TODO markers left
+- no code, config, or test was modified so pytest baseline from A3 handoff is still valid
+- `git log --oneline chore/project-state ^int/multi-agent` shows exactly the four commits above
+
+tech_debt_surfaced:
+- resolve_output_dir(exist_ok=False) documented in PROJECT_STATE.md §8
+- CLI has no --reference-path; hybrid must go through YAML overlay
+- lambda_pde / lambda_data snapshot-at-Trainer-__init__ documented in PROJECT_STATE.md §8
+- epochs=0 edge case documented in PROJECT_STATE.md §8
+- Δ̃τ / PML closure flagged for A5 in PROJECT_STATE.md §8 and §10
+
+next_actions_for_a0:
+- push branch chore/project-state
+- --no-ff merge into int/multi-agent per WORKTREE_BOARD §9.6
+- update WORKTREE_BOARD.md §20.5 (A4 row) with MERGED status and commit shortlist
+- Gate 2 open condition is met once A4 is merged; downstream (A6) becomes actionable
+
+notes_for_integrator:
+- all four doc files are pure markdown; there should be no test regressions
+- if a later agent edits the locked artifact list in tests/test_runner.py, PROJECT_STATE.md §5.1 must be updated in the same commit to keep the two in lockstep
