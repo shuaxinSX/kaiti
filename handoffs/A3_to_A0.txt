@@ -1,0 +1,61 @@
+[A3 -> A0 HANDOFF]
+branch: feat/hybrid-loss
+base_commit: 6f5ee94
+implementation_commit: a966eee
+
+files_changed:
+- src/train/trainer.py
+- src/train/supervision.py
+- configs/experiments/hybrid.yaml
+- tests/test_train.py
+
+config_fields_added:
+- training.supervision.enabled
+- training.supervision.reference_path
+
+trainer_fields_added:
+- supervision_enabled
+- reference_path
+- reference_target
+- loss_history_total
+- loss_history_pde
+- loss_history_data
+- last_step_metrics
+
+behavior_contract:
+- Trainer.train() still returns list[float] total loss history
+- runner.py unchanged
+- tests/test_runner.py unchanged
+- lambda_data == 0 keeps PDE-only behavior even if supervision.enabled = true
+- lambda_pde / lambda_data are snapshotted during Trainer.__init__; mutating cfg.training after Trainer(cfg) no longer changes the active weights
+
+fail_fast_rules:
+- lambda_data > 0 with supervision disabled -> ValueError
+- lambda_data > 0 with missing reference_path -> ValueError
+- missing reference file -> FileNotFoundError
+- non-complex reference_envelope.npy -> ValueError
+- shape mismatch against full grid [H, W] -> ValueError
+
+reference_contract_consumed:
+- file: reference_envelope.npy
+- dtype: complex64 or complex128
+- shape: full grid including PML
+- semantic: scattering envelope, not wavefield
+
+commands_run:
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_train.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_runner.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_reference_solver.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_config.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python scripts/run_train.py --config configs/base.yaml --overlay configs/debug.yaml --device cpu --epochs 1 --velocity-model smooth_lens --output-dir ../runs/train/pde_only_smoke_review
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 programmatic hybrid smoke via configs/experiments/hybrid.yaml + temporary reference_envelope.npy
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 fail-fast smoke for disabled supervision and missing reference file
+
+result:
+- all passed
+
+notes_for_integrator:
+- shared editable install in /Users/ccf/Desktop/开题/.venv was rebound to /Users/ccf/Desktop/wt/train so plain pytest now resolves this worktree; after merging into int/multi-agent, run `pip install -e ".[dev]"` again from /Users/ccf/Desktop/开题 to rebind the shared venv
+- runner can later consume loss_history_total / loss_history_pde / loss_history_data if A0 wants loss-component CSV or summary fields
+- CLI still has no direct --reference-path; supervision path is configured through YAML or programmatic config mutation
+- epochs=0 remains a pre-existing corner case: final logging still indexes the last loss entry and will fail if no step is executed

@@ -21,7 +21,8 @@ from src.physics.pml import PMLTensors
 from src.physics.rhs import compute_rhs, compute_loss_mask
 from src.physics.residual import ResidualComputer
 from src.models.nsno import NSNO2D
-from src.train.losses import loss_total
+from src.train.losses import loss_data, loss_total
+from src.train.supervision import load_reference_target, resolve_supervision_config
 
 logger = logging.getLogger(__name__)
 
@@ -129,12 +130,37 @@ class Trainer:
         torch.random.set_rng_state(rng_state)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=cfg.training.lr)
 
+        supervision_cfg = resolve_supervision_config(cfg)
+        self.lambda_pde = supervision_cfg["lambda_pde"]
+        self.lambda_data = supervision_cfg["lambda_data"]
+        self.supervision_enabled = False
+        self.reference_path = supervision_cfg["reference_path"]
+        self.reference_target = None
+        self.loss_history_total = []
+        self.loss_history_pde = []
+        self.loss_history_data = []
+        self.last_step_metrics = {}
+
+        if supervision_cfg["active"]:
+            self.reference_path, self.reference_target = load_reference_target(
+                self.reference_path,
+                expected_shape=(self.grid.ny_total, self.grid.nx_total),
+                device=self.device,
+            )
+            self.supervision_enabled = True
+        elif supervision_cfg["requested"]:
+            logger.warning(
+                "training.supervision.enabled=true but lambda_data=0; "
+                "training remains PDE-only."
+            )
+
         logger.info(
-            "预处理完成。网格: %dx%d, ω=%.1f, device=%s",
+            "预处理完成。网格: %dx%d, ω=%.1f, device=%s, supervision=%s",
             self.grid.nx_total,
             self.grid.ny_total,
             omega,
             self.device,
+            self.supervision_enabled,
         )
 
     def train(self, epochs=None):
@@ -149,11 +175,16 @@ class Trainer:
         if epochs is None:
             epochs = self.cfg.training.epochs
 
-        lambda_pde = self.cfg.training.lambda_pde
-        lambda_data = self.cfg.training.lambda_data
-        losses = []
+        self.loss_history_total = []
+        self.loss_history_pde = []
+        self.loss_history_data = []
+        mode = "hybrid"
+        if self.lambda_data == 0.0:
+            mode = "pde-only"
+        elif self.lambda_pde == 0.0:
+            mode = "data-only"
 
-        logger.info("开始训练: %d epochs", epochs)
+        logger.info("开始训练: %d epochs, mode=%s", epochs, mode)
 
         for epoch in range(epochs):
             self.optimizer.zero_grad()
@@ -163,21 +194,47 @@ class Trainer:
 
             # 残差 + 损失
             result = self.residual_computer.compute(A_scat)
-            total = loss_total(result['loss_pde'], lambda_pde=lambda_pde,
-                               lambda_data=lambda_data)
+            loss_pde_val = result["loss_pde"]
+            loss_data_val = (
+                loss_data(A_scat, self.reference_target)
+                if self.supervision_enabled
+                else None
+            )
+            total = loss_total(
+                loss_pde_val,
+                loss_data_val,
+                lambda_pde=self.lambda_pde,
+                lambda_data=self.lambda_data,
+            )
 
             # 反向
             total.backward()
             self.optimizer.step()
 
-            loss_val = total.item()
-            losses.append(loss_val)
+            loss_total_item = float(total.item())
+            loss_pde_item = float(loss_pde_val.item())
+            loss_data_item = float(loss_data_val.item()) if loss_data_val is not None else 0.0
+            self.loss_history_total.append(loss_total_item)
+            self.loss_history_pde.append(loss_pde_item)
+            self.loss_history_data.append(loss_data_item)
+            self.last_step_metrics = {
+                "loss_total": loss_total_item,
+                "loss_pde": loss_pde_item,
+                "loss_data": loss_data_item,
+            }
 
             if (epoch + 1) % max(1, epochs // 10) == 0 or epoch == 0:
-                logger.info("Epoch %d/%d, loss=%.6e", epoch + 1, epochs, loss_val)
+                logger.info(
+                    "Epoch %d/%d, loss_total=%.6e, loss_pde=%.6e, loss_data=%.6e",
+                    epoch + 1,
+                    epochs,
+                    loss_total_item,
+                    loss_pde_item,
+                    loss_data_item,
+                )
 
-        logger.info("训练完成。最终 loss=%.6e", losses[-1])
-        return losses
+        logger.info("训练完成。最终 loss_total=%.6e", self.loss_history_total[-1])
+        return list(self.loss_history_total)
 
     def reconstruct_wavefield(self):
         """重构全波场 u_total = u₀ + Â·exp[i(ωτ+π/4)]。

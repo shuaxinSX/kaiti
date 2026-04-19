@@ -1,0 +1,30 @@
+physics:
+  omega: 10.0
+
+grid:
+  nx: 32
+  ny: 32
+
+pml:
+  width: 5
+
+eikonal:
+  fsm_max_iter: 20
+  fsm_tol: 1.0e-8
+
+model:
+  nsno_blocks: 2
+  nsno_channels: 16
+  fno_modes: 8
+
+training:
+  epochs: 50
+  lr: 1.0e-3
+  lambda_pde: 1.0
+  lambda_data: 0.0
+  supervision:
+    enabled: false
+    reference_path: null
+
+logging:
+  level: "DEBUG"
