@@ -371,48 +371,55 @@ L_total = λ_pde · L_pde + λ_data · L_data（如有标签）
 **base.yaml 最小参数集**：
 
 ```yaml
-# 物理参数
-omega: 30.0                # 圆频率 (先用低频调试)
-source_pos: [0.5, 0.5]    # 震源物理坐标 (归一化域中心)
+physics:
+  omega: 30.0
+  source_pos: [0.5, 0.5]
 
-# 网格参数
-domain: [0.0, 1.0, 0.0, 1.0]  # [x_min, x_max, y_min, y_max]
-nx: 128                    # x方向格点数（不含PML）
-ny: 128                    # y方向格点数（不含PML）
+grid:
+  domain: [0.0, 1.0, 0.0, 1.0]
+  nx: 128
+  ny: 128
 
-# 介质参数
-c_background: 1.0          # 背景波速
-# velocity_model: "homogeneous" | "smooth_lens" | "layered"
+medium:
+  c_background: 1.0
+  velocity_model: "homogeneous"  # homogeneous | smooth_lens | layered
 
-# PML参数
-pml_width: 20              # PML层格点数
-pml_power: 2               # 阻尼剖面幂次
-pml_R0: 1.0e-6             # 目标反射系数
+pml:
+  width: 20
+  power: 2
+  R0: 1.0e-6
 
-# Eikonal参数
-fsm_max_iter: 100          # FSM最大扫描轮次
-fsm_tol: 1.0e-10           # FSM收敛阈值
-source_freeze_radius: 1    # 震源冻结圈数（网格数）
-eikonal_precision: "float64"
+eikonal:
+  fsm_max_iter: 100
+  fsm_tol: 1.0e-10
+  source_freeze_radius: 1
+  precision: "float64"
 
-# 网络参数 (M7之后启用)
-nsno_blocks: 4             # NSNO Block数（多重散射迭代数）
-nsno_channels: 32          # 隐层通道数
-fno_modes: 16              # FNO保留的傅里叶模式数
-activation: "gelu"
+model:
+  nsno_blocks: 4
+  nsno_channels: 32
+  fno_modes: 16
+  activation: "gelu"
 
-# Loss参数
-source_mask_radius: 1.5    # 震源穿孔掩码半径 (单位: h)
-pml_rhs_zero: true         # PML内RHS强制为0
-omega2_normalize: true     # 残差两端除以ω²
+loss:
+  source_mask_radius: 1.5
+  pml_rhs_zero: true
+  omega2_normalize: true
 
-# 训练参数 (M9之后启用)
-lr: 1.0e-3
-epochs: 1000
-batch_size: 1              # 当前单样本
-lambda_pde: 1.0
-lambda_data: 0.0           # 无监督标签时为0
+training:
+  lr: 1.0e-3
+  epochs: 1000
+  batch_size: 1
+  lambda_pde: 1.0
+  lambda_data: 0.0
+
+logging:
+  level: "INFO"
+  save_dir: "outputs"
+  save_interval: 100
 ```
+
+注：当前仓库已统一使用分层 schema；旧的扁平键名（如 `omega`、`nx`、`pml_width`）不再对应实际 `configs/base.yaml`。
 
 **Git**：
 - 分支：`feat/m0-bootstrap`
@@ -858,7 +865,7 @@ u_total = u0 + (A_scat_real + 1j * A_scat_imag) * phase_restorer
 - [x] 变速介质：Â_scat 非零且平滑
 
 **通过标准**：
-- [x] 小样本可拟合（loss 下降 2 个数量级以上）
+- [x] 小样本可拟合（debug + smooth_lens smoke 中 loss 稳定下降；当前基线不宣称“两数量级”）
 - [x] 训练稳定（无 NaN 爆炸）
 - [x] 全波场可视化物理合理
 
@@ -946,7 +953,7 @@ v0.1-m3-eikonal
 ## 9. 当前未决问题（Open Questions）
 
 > 以下问题在实现过程中需要通过实验确定，确定后更新本文档并冻结。
-> 备注：Q1–Q8 已由 M0–M9 基线闭合；Q9、Q10 依赖后续多波数/标签实验，留给 A5 / A6。
+> 备注：Q1–Q6、Q8 已由 M0–M9 基线闭合；Q7 仍待 A5 复核；Q9、Q10 依赖后续多波数/标签实验，留给 A6。
 
 | 编号 | 问题 | 当前结论 | 状态 |
 |------|------|---------|------|

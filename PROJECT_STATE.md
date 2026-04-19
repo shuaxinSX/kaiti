@@ -13,7 +13,7 @@
 | 快照 commit | `b80dc88` |
 | 快照日期 | 2026-04-19 |
 | 活跃文档分支 | `chore/project-state`（本次 A4 工作分支） |
-| Python 版本要求 | `>=3.9,<3.10` |
+| Python 版本要求 | `3.9.x`（`pyproject.toml` 约束 `>=3.9,<3.10`） |
 | 测试入口 | `pytest -q`（共 16 个测试文件） |
 | 训练入口 | `helmholtz-train` 或 `python scripts/run_train.py` |
 
@@ -80,9 +80,12 @@
 
 ### 4.1 环境安装
 
+> 解释器需满足 `>=3.9,<3.10`；示例固定使用 `python3.9`，避免误用系统 `python3.10+`。
+
 ```bash
-python -m venv .venv
+python3.9 -m venv .venv
 source .venv/bin/activate
+python --version  # 应显示 3.9.x
 pip install -e ".[dev]"
 ```
 
@@ -288,8 +291,8 @@ reference_error_heatmaps.png   # 同上
 | A2 | `feat/reference-eval` | ✅ MERGED | `src/eval/`、`solve_reference.py`、参考摘要键 |
 | A3 | `feat/hybrid-loss` | ✅ MERGED | `src/train/supervision.py`、三路 loss 历史、fail-fast 规则 |
 | A4（文档） | `chore/project-state`（本分支） | 🟡 进行中 | 本 PROJECT_STATE.md + README / CHANGELOG / DEV_PLAN 同步 |
-| A5（物理审计） | `audit/physics-review`（规划） | ⏸ 未开始 | 基于 A2 基线做 Δ̃τ、PML、π/4 相位闭合审计 |
-| A6（实验矩阵） | `exp/experiment-matrix`（规划） | ✅ READY | 消费 A2 的参考解、A3 的 hybrid/data-only 管线 |
+| A5（物理审计） | `fix/residual-pml-audit`（规划） | ⏸ 未开始 | 基于 A2 基线做 Δ̃τ、PML、π/4 相位闭合审计 |
+| A6（实验矩阵） | `exp/benchmark-matrix`（规划） | ✅ READY | 消费 A2 的参考解、A3 的 hybrid/data-only 管线 |
 
 ### 依赖边
 

@@ -75,9 +75,10 @@
 git clone <repo-url>
 cd 开题
 
-# 2. 创建虚拟环境（项目要求 Python 3.9.x）
-python -m venv .venv
+# 2. 创建虚拟环境（项目要求 Python 3.9.x；示例固定用 python3.9）
+python3.9 -m venv .venv
 source .venv/bin/activate
+python --version  # 应显示 3.9.x
 
 # 3. 安装（pyproject.toml 为唯一事实源）
 pip install -e ".[dev]"

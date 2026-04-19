@@ -11,7 +11,7 @@ files_changed:
 - PROJECT_STATE.md           (new)
 - README.md                  (rewritten to integrated baseline)
 - CHANGELOG.md               (Unreleased section rebuilt)
-- DEV_PLAN.md                (M0-M9 checkboxes ticked with evidence refs; Q1-Q8 frozen, Q7/Q9/Q10 rerouted)
+- DEV_PLAN.md                (M0-M9 checkboxes ticked with evidence refs; Q1-Q6/Q8 frozen, Q7/Q9/Q10 rerouted)
 - handoffs/A4_to_A0.txt      (this file)
 
 scope_respected:
@@ -41,7 +41,7 @@ next_actions_for_a0:
 - push branch chore/project-state
 - --no-ff merge into int/multi-agent per WORKTREE_BOARD §9.6
 - update WORKTREE_BOARD.md §20.5 (A4 row) with MERGED status and commit shortlist
-- Gate 2 open condition is met once A4 is merged; downstream (A6) becomes actionable
+- merge A4 to satisfy Gate 2 (project-state sync); A6 is already actionable via Gate 4 after A3 merged
 
 notes_for_integrator:
 - all four doc files are pure markdown; there should be no test regressions

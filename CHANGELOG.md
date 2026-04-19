@@ -11,7 +11,7 @@
   - `configs/experiments/hybrid.yaml`：hybrid/data-only 字段模板（默认仍为 PDE-only）
   - 新配置字段：`training.supervision.enabled`、`training.supervision.reference_path`
   - 新 Trainer 字段：`supervision_enabled`、`reference_path`、`reference_target`、`loss_history_total`、`loss_history_pde`、`loss_history_data`、`last_step_metrics`
-  - 新测试：`tests/test_train.py` 覆盖 PDE-only/data-only/hybrid 三种模式与 5 条 fail-fast 规则
+  - 新测试：`tests/test_train.py` 覆盖 PDE-only/data-only/hybrid 三种模式与 4 条 fail-fast 规则
 - **A2 参考解评估链**（`feat/reference-eval`）
   - `src/eval/reference_eval.py`：`compute_prediction_envelope`、`export_reference_artifacts`、`solve_reference_from_config`、`solve_reference_from_run_dir`、常量 `REFERENCE_SUMMARY_KEYS`
   - `src/eval/reference_solver.py` 收归到 `src/eval/__init__.py` 的对外出口
