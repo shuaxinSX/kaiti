@@ -21,7 +21,8 @@ from src.physics.pml import PMLTensors
 from src.physics.rhs import compute_rhs, compute_loss_mask
 from src.physics.residual import ResidualComputer
 from src.models.nsno import NSNO2D
-from src.train.losses import loss_total
+from src.train.losses import loss_data, loss_total
+from src.train.supervision import load_reference_target, resolve_supervision_config
 
 logger = logging.getLogger(__name__)
 
@@ -129,12 +130,37 @@ class Trainer:
         torch.random.set_rng_state(rng_state)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=cfg.training.lr)
 
+        supervision_cfg = resolve_supervision_config(cfg)
+        self.lambda_pde = supervision_cfg["lambda_pde"]
+        self.lambda_data = supervision_cfg["lambda_data"]
+        self.supervision_enabled = False
+        self.reference_path = supervision_cfg["reference_path"]
+        self.reference_target = None
+        self.loss_history_total = []
+        self.loss_history_pde = []
+        self.loss_history_data = []
+        self.last_step_metrics = {}
+
+        if supervision_cfg["active"]:
+            self.reference_path, self.reference_target = load_reference_target(
+                self.reference_path,
+                expected_shape=(self.grid.ny_total, self.grid.nx_total),
+                device=self.device,
+            )
+            self.supervision_enabled = True
+        elif supervision_cfg["requested"]:
+            logger.warning(
+                "training.supervision.enabled=true but lambda_data=0; "
+                "training remains PDE-only."
+            )
+
         logger.info(
-            "预处理完成。网格: %dx%d, ω=%.1f, device=%s",
+            "预处理完成。网格: %dx%d, ω=%.1f, device=%s, supervision=%s",
             self.grid.nx_total,
             self.grid.ny_total,
             omega,
             self.device,
+            self.supervision_enabled,
         )
 
     def train(self, epochs=None):
