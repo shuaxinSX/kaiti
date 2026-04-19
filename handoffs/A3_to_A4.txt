@@ -1,0 +1,31 @@
+[A3 -> A4 DOC HANDOFF]
+New config fields:
+- training.supervision.enabled
+- training.supervision.reference_path
+
+Mode definitions:
+- PDE-only: lambda_pde > 0, lambda_data = 0
+- data-only: lambda_pde = 0, lambda_data > 0
+- hybrid: lambda_pde > 0, lambda_data > 0
+
+Behavior notes:
+- default path remains PDE-only because base.yaml keeps lambda_data = 0.0
+- training only reads reference_envelope.npy when lambda_data > 0 and supervision.enabled = true
+- reference_path must point to A2 output reference_envelope.npy
+- reference file must be complex and shaped as the full grid including PML
+- if supervision is enabled but lambda_data = 0, training stays PDE-only and logs a warning
+- lambda_pde / lambda_data are resolved when Trainer is constructed, not re-read dynamically during train()
+
+Current CLI limitation:
+- scripts/run_train.py does not expose a dedicated --reference-path flag
+- hybrid/data-only usage currently requires a YAML overlay or programmatic config mutation
+
+Example file:
+- configs/experiments/hybrid.yaml
+
+Error behavior to document:
+- lambda_data > 0 with supervision disabled -> ValueError
+- lambda_data > 0 with missing reference_path -> ValueError
+- missing reference file -> FileNotFoundError
+- non-complex reference file -> ValueError
+- shape mismatch -> ValueError
