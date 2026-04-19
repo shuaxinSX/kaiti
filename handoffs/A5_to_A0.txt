@@ -1,0 +1,66 @@
+[A5 -> A0 HANDOFF]
+branch: fix/residual-pml-audit
+base_commit: b80dc88
+implementation_commit: 7c25583
+test_commit: 6c328db
+
+files_changed:
+- src/physics/residual.py
+- tests/test_residual.py
+
+scope_kept:
+- src/train/* unchanged
+- src/eval/* unchanged
+- scripts/* unchanged
+- tests/test_reference_solver.py unchanged
+- tests/test_train.py unchanged
+- tests/test_runner.py unchanged
+
+new_residual_api:
+- ResidualComputer(..., lap_tau_mode="mixed_legacy")
+- supported modes:
+  - mixed_legacy
+  - stretched_divergence
+
+compatibility_guarantees:
+- default constructor path remains mixed_legacy
+- ResidualComputer.compute() return keys unchanged
+- self.lap_tau_c still exists and remains the active alias consumed by A2 reference assembly
+- added caches:
+  - lap_tau_legacy_c
+  - lap_tau_candidate_c
+
+candidate_formula:
+- stretched_divergence
+- lap_tau_candidate
+  = A_x * d/dx(grad_tau_x) - B_x * grad_tau_x
+  + A_y * d/dy(grad_tau_y) - B_y * grad_tau_y
+
+audit_numbers_debug_smooth_lens:
+- rel_l2_eval = 0.5084495064331273
+- rel_l2_whole = 0.5102330279464612
+- rel_l2_pml = 0.5222063136504866
+- self_loss_legacy = 3.2707370459342548e-15
+- self_loss_candidate = 2.763710535246119e-15
+- cross_loss_candidate_on_legacy = 0.0006041940650902689
+- cross_loss_legacy_on_candidate = 0.000848872063215822
+
+interpretation:
+- candidate is numerically self-consistent under its own operator
+- candidate is not a small local PML-only perturbation; it changes evaluation/physical behavior at roughly 5.1e-1 relative L2 as well
+- recommendation: keep mixed_legacy as default and retain stretched_divergence as audit-only mode for now
+
+commands_run:
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_residual.py tests/test_pml.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_reference_solver.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_train.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 pytest -q tests/test_runner.py
+- OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 programmatic audit smoke on debug + smooth_lens
+
+result:
+- all passed
+
+notes_for_integrator:
+- shared editable install in /Users/ccf/Desktop/开题/.venv was rebound to /Users/ccf/Desktop/wt/phys; after integrating into int/multi-agent, run `pip install -e ".[dev]"` again from /Users/ccf/Desktop/开题 to rebind the shared venv
+- no CLI or YAML path exposes lap_tau_mode in this branch; mode switch remains programmatic only
+- because A2 reference assembly reads residual.lap_tau_c, reference solve automatically follows the selected mode without any src/eval changes
