@@ -1,0 +1,70 @@
+# =============================================================================
+# B8_seed.yaml
+# Experiment ID: B8
+# Purpose: estimate stochastic training variance across repeated seeds.
+# Variable axes: training.seed
+# Fixed axes: representative best-of-B3/B4 configs, epochs=500
+# Expected runs: 10
+# Gate: Gate 6 / A6
+# Status: blocked
+# =============================================================================
+
+batch_id: B8
+name: seed
+status: blocked
+blocked_reason: training.seed is not exposed by configs/base.yaml or the current CLI/Trainer path.
+entrypoint: train
+purpose: Reserved until A7 exposes seed as a first-class runtime axis.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+  - B4
+expected_runs: 10
+variable_axes:
+  - training.seed = [0, 1, 2, 3, 4]
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  training:
+    epochs: 500
+matrix:
+  - run_id: best_grid__seed0
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_grid__seed1
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_grid__seed2
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_grid__seed3
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_grid__seed4
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_capacity__seed0
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_capacity__seed1
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_capacity__seed2
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_capacity__seed3
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}
+  - run_id: best_capacity__seed4
+    status: blocked
+    blocked_reason: training.seed is not currently wired.
+    overrides: {}

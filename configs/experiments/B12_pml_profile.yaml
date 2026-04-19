@@ -1,0 +1,62 @@
+# =============================================================================
+# B12_pml_profile.yaml
+# Experiment ID: B12
+# Purpose: sweep the wired PML profile controls (power, R0).
+# Variable axes: pml.power × pml.R0 (selected subset)
+# Fixed axes: smooth_lens, provisional N=128, pml.width=16, omega=30
+# Expected runs: 6
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B12
+name: pml_profile
+status: active
+entrypoint: train
+purpose: Quantify how the implemented sigma profile parameters affect boundary residuals.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+expected_runs: 6
+variable_axes:
+  - pml.power = [1, 2, 3]
+  - pml.R0 = [1e-4, 1e-6, 1e-8] on a selected subset
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: p1__R1e4
+    overrides:
+      pml: {power: 1, R0: 1.0e-4}
+  - run_id: p1__R1e6
+    overrides:
+      pml: {power: 1, R0: 1.0e-6}
+  - run_id: p2__R1e6
+    overrides:
+      pml: {power: 2, R0: 1.0e-6}
+  - run_id: p2__R1e8
+    overrides:
+      pml: {power: 2, R0: 1.0e-8}
+  - run_id: p3__R1e6
+    overrides:
+      pml: {power: 3, R0: 1.0e-6}
+  - run_id: p3__R1e8
+    overrides:
+      pml: {power: 3, R0: 1.0e-8}

@@ -1,0 +1,65 @@
+# =============================================================================
+# B7_source_pos.yaml
+# Experiment ID: B7
+# Purpose: probe source-position robustness and define practical keep-out zones.
+# Variable axes: physics.source_pos
+# Fixed axes: medium=smooth_lens, provisional N=128, pml.width=16, omega=30
+# Expected runs: 7
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B7
+name: source_pos
+status: active
+entrypoint: train
+purpose: Measure how close-to-boundary sources degrade the residual statistics.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+expected_runs: 7
+variable_axes:
+  - physics.source_pos = center / axial offsets / near-boundary / corner
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  physics:
+    omega: 30.0
+    source_pos: [0.5, 0.5]
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: center
+    overrides:
+      physics: {source_pos: [0.5, 0.5]}
+  - run_id: x_plus_quarter
+    overrides:
+      physics: {source_pos: [0.75, 0.5]}
+  - run_id: x_minus_quarter
+    overrides:
+      physics: {source_pos: [0.25, 0.5]}
+  - run_id: y_plus_quarter
+    overrides:
+      physics: {source_pos: [0.5, 0.75]}
+  - run_id: y_minus_quarter
+    overrides:
+      physics: {source_pos: [0.5, 0.25]}
+  - run_id: near_left_boundary
+    overrides:
+      physics: {source_pos: [0.02, 0.5]}
+  - run_id: lower_left_corner
+    overrides:
+      physics: {source_pos: [0.02, 0.02]}

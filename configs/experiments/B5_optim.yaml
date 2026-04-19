@@ -1,0 +1,105 @@
+# =============================================================================
+# B5_optim.yaml
+# Experiment ID: B5
+# Purpose: sweep long-horizon optimization settings on a provisional baseline.
+# Variable axes: training.lr × training.epochs
+# Fixed axes: smooth_lens, provisional N=128, pml.width=16, omega=30, PDE-only
+# Expected runs: 20
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B5
+name: optim
+status: active
+entrypoint: train
+purpose: Compare convergence rate and long-horizon stability across learning rates and epoch budgets.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+  - B4
+expected_runs: 20
+variable_axes:
+  - training.lr = [1e-4, 3e-4, 1e-3, 3e-3, 1e-2]
+  - training.epochs = [500, 1000, 3000, 5000]
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: lr1e4__ep500
+    overrides:
+      training: {lr: 1.0e-4, epochs: 500}
+  - run_id: lr1e4__ep1000
+    overrides:
+      training: {lr: 1.0e-4, epochs: 1000}
+  - run_id: lr1e4__ep3000
+    overrides:
+      training: {lr: 1.0e-4, epochs: 3000}
+  - run_id: lr1e4__ep5000
+    overrides:
+      training: {lr: 1.0e-4, epochs: 5000}
+  - run_id: lr3e4__ep500
+    overrides:
+      training: {lr: 3.0e-4, epochs: 500}
+  - run_id: lr3e4__ep1000
+    overrides:
+      training: {lr: 3.0e-4, epochs: 1000}
+  - run_id: lr3e4__ep3000
+    overrides:
+      training: {lr: 3.0e-4, epochs: 3000}
+  - run_id: lr3e4__ep5000
+    overrides:
+      training: {lr: 3.0e-4, epochs: 5000}
+  - run_id: lr1e3__ep500
+    overrides:
+      training: {lr: 1.0e-3, epochs: 500}
+  - run_id: lr1e3__ep1000
+    overrides:
+      training: {lr: 1.0e-3, epochs: 1000}
+  - run_id: lr1e3__ep3000
+    overrides:
+      training: {lr: 1.0e-3, epochs: 3000}
+  - run_id: lr1e3__ep5000
+    overrides:
+      training: {lr: 1.0e-3, epochs: 5000}
+  - run_id: lr3e3__ep500
+    overrides:
+      training: {lr: 3.0e-3, epochs: 500}
+  - run_id: lr3e3__ep1000
+    overrides:
+      training: {lr: 3.0e-3, epochs: 1000}
+  - run_id: lr3e3__ep3000
+    overrides:
+      training: {lr: 3.0e-3, epochs: 3000}
+  - run_id: lr3e3__ep5000
+    overrides:
+      training: {lr: 3.0e-3, epochs: 5000}
+  - run_id: lr1e2__ep500
+    overrides:
+      training: {lr: 1.0e-2, epochs: 500}
+  - run_id: lr1e2__ep1000
+    overrides:
+      training: {lr: 1.0e-2, epochs: 1000}
+  - run_id: lr1e2__ep3000
+    overrides:
+      training: {lr: 1.0e-2, epochs: 3000}
+  - run_id: lr1e2__ep5000
+    overrides:
+      training: {lr: 1.0e-2, epochs: 5000}

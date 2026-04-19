@@ -1,0 +1,53 @@
+# =============================================================================
+# B9_lap_tau_audit.yaml
+# Experiment ID: B9
+# Purpose: replay the A5 residual audit under production-like matrix settings.
+# Variable axes: residual.lap_tau_mode × medium.velocity_model
+# Fixed axes: provisional best-of-B3 config, epochs=500
+# Expected runs: 6
+# Gate: Gate 6 / A6
+# Status: blocked
+# =============================================================================
+
+batch_id: B9
+name: lap_tau_audit
+status: blocked
+blocked_reason: lap_tau_mode is implemented in ResidualComputer but not exposed through the training config/CLI path.
+entrypoint: train
+purpose: Reserved until A7 wires residual.lap_tau_mode from config into Trainer.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+  - A5
+expected_runs: 6
+variable_axes:
+  - residual.lap_tau_mode = [mixed_legacy, stretched_divergence]
+  - medium.velocity_model = [homogeneous, smooth_lens, layered]
+fixed:
+  training:
+    epochs: 500
+matrix:
+  - run_id: homogeneous__mixed_legacy
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}
+  - run_id: homogeneous__stretched_divergence
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}
+  - run_id: smooth_lens__mixed_legacy
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}
+  - run_id: smooth_lens__stretched_divergence
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}
+  - run_id: layered__mixed_legacy
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}
+  - run_id: layered__stretched_divergence
+    status: blocked
+    blocked_reason: residual.lap_tau_mode is not wired from config.
+    overrides: {}

@@ -1,0 +1,59 @@
+# =============================================================================
+# B0_smoke.yaml
+# Experiment ID: B0
+# Purpose: server-side smoke gate on the smallest debug-like stack.
+# Variable axes: medium.velocity_model ∈ {homogeneous, smooth_lens, layered}
+# Fixed axes: omega=10, grid=32x32, pml.width=5, epochs=50, PDE-only
+# Expected runs: 3
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B0
+name: smoke
+status: active
+entrypoint: train
+purpose: Verify the packaged stack, trainer, evaluation export, and layered integration on the smallest runnable grid.
+gate: Gate 6 / A6
+expected_runs: 3
+gate_run_id: smooth_lens__debug32__ep50
+variable_axes:
+  - medium.velocity_model = [homogeneous, smooth_lens, layered]
+fixed:
+  physics:
+    omega: 10.0
+  grid:
+    nx: 32
+    ny: 32
+  pml:
+    width: 5
+  eikonal:
+    fsm_max_iter: 20
+    fsm_tol: 1.0e-8
+  model:
+    nsno_blocks: 2
+    nsno_channels: 16
+    fno_modes: 8
+  training:
+    epochs: 50
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: smooth_lens__debug32__ep50
+    overrides:
+      medium:
+        velocity_model: smooth_lens
+  - run_id: homogeneous__debug32__ep50
+    overrides:
+      medium:
+        velocity_model: homogeneous
+  - run_id: layered__debug32__ep50
+    overrides:
+      medium:
+        velocity_model: layered

@@ -1,0 +1,62 @@
+# =============================================================================
+# B10_reference_only.yaml
+# Experiment ID: B10
+# Purpose: map the reference solver floor without training.
+# Variable axes: representative (omega, grid, medium) tuples
+# Fixed axes: solve_reference.py config mode only
+# Expected runs: 6
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B10
+name: reference_only
+status: active
+entrypoint: reference_only
+purpose: Build reference-only baselines for B2/B3 comparisons and B14 label sources.
+gate: Gate 6 / A6
+expected_runs: 6
+variable_axes:
+  - representative tuples over medium / omega / grid size
+fixed:
+  training:
+    epochs: 1
+  logging:
+    level: INFO
+matrix:
+  - run_id: homogeneous__omega30__N128__pml16
+    overrides:
+      medium: {velocity_model: homogeneous}
+      physics: {omega: 30.0}
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: smooth_lens__omega30__N128__pml16
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      physics: {omega: 30.0}
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: layered__omega30__N128__pml16
+    overrides:
+      medium: {velocity_model: layered}
+      physics: {omega: 30.0}
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: smooth_lens__omega60__N128__pml16
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      physics: {omega: 60.0}
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: smooth_lens__omega90__N128__pml16
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      physics: {omega: 90.0}
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: smooth_lens__omega30__N192__pml24
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      physics: {omega: 30.0}
+      grid: {nx: 192, ny: 192}
+      pml: {width: 24}

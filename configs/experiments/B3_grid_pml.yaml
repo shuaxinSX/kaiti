@@ -1,0 +1,85 @@
+# =============================================================================
+# B3_grid_pml.yaml
+# Experiment ID: B3
+# Purpose: cross grid resolution and PML width to lock a production baseline.
+# Variable axes: grid.nx/grid.ny × pml.width
+# Fixed axes: medium=smooth_lens, omega=30, epochs=500, PDE-only
+# Expected runs: 12
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B3
+name: grid_pml
+status: active
+entrypoint: train
+purpose: Identify the smallest sufficient grid and the marginal value of thicker PML.
+gate: Gate 6 / A6
+expected_runs: 12
+variable_axes:
+  - grid.nx/grid.ny = [96, 128, 192, 256]
+  - pml.width = [8, 16, 24]
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  physics:
+    omega: 30.0
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: smooth_lens__N096__pml08__ep500
+    overrides:
+      grid: {nx: 96, ny: 96}
+      pml: {width: 8}
+  - run_id: smooth_lens__N096__pml16__ep500
+    overrides:
+      grid: {nx: 96, ny: 96}
+      pml: {width: 16}
+  - run_id: smooth_lens__N096__pml24__ep500
+    overrides:
+      grid: {nx: 96, ny: 96}
+      pml: {width: 24}
+  - run_id: smooth_lens__N128__pml08__ep500
+    overrides:
+      grid: {nx: 128, ny: 128}
+      pml: {width: 8}
+  - run_id: smooth_lens__N128__pml16__ep500
+    overrides:
+      grid: {nx: 128, ny: 128}
+      pml: {width: 16}
+  - run_id: smooth_lens__N128__pml24__ep500
+    overrides:
+      grid: {nx: 128, ny: 128}
+      pml: {width: 24}
+  - run_id: smooth_lens__N192__pml08__ep500
+    overrides:
+      grid: {nx: 192, ny: 192}
+      pml: {width: 8}
+  - run_id: smooth_lens__N192__pml16__ep500
+    overrides:
+      grid: {nx: 192, ny: 192}
+      pml: {width: 16}
+  - run_id: smooth_lens__N192__pml24__ep500
+    overrides:
+      grid: {nx: 192, ny: 192}
+      pml: {width: 24}
+  - run_id: smooth_lens__N256__pml08__ep500
+    overrides:
+      grid: {nx: 256, ny: 256}
+      pml: {width: 8}
+  - run_id: smooth_lens__N256__pml16__ep500
+    overrides:
+      grid: {nx: 256, ny: 256}
+      pml: {width: 16}
+  - run_id: smooth_lens__N256__pml24__ep500
+    overrides:
+      grid: {nx: 256, ny: 256}
+      pml: {width: 24}

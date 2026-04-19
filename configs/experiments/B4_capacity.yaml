@@ -1,0 +1,82 @@
+# =============================================================================
+# B4_capacity.yaml
+# Experiment ID: B4
+# Purpose: compare model capacity tiers after the grid/PML baseline is selected.
+# Variable axes: model tier × representative medium family
+# Fixed axes: provisional N=128, pml.width=16, omega=30, epochs=500
+# Expected runs: 10
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B4
+name: capacity
+status: active
+entrypoint: train
+purpose: Produce a runtime-vs-accuracy Pareto across capacity tiers.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+expected_runs: 10
+variable_axes:
+  - capacity_tier = [small, base, large, xlarge]
+  - medium.velocity_model representative set = [homogeneous, smooth_lens, layered]
+fixed:
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: homogeneous__small
+    overrides:
+      medium: {velocity_model: homogeneous}
+      model: {nsno_blocks: 2, nsno_channels: 16, fno_modes: 8}
+  - run_id: homogeneous__base
+    overrides:
+      medium: {velocity_model: homogeneous}
+      model: {nsno_blocks: 4, nsno_channels: 32, fno_modes: 16}
+  - run_id: homogeneous__large
+    overrides:
+      medium: {velocity_model: homogeneous}
+      model: {nsno_blocks: 6, nsno_channels: 64, fno_modes: 24}
+  - run_id: homogeneous__xlarge
+    overrides:
+      medium: {velocity_model: homogeneous}
+      model: {nsno_blocks: 8, nsno_channels: 96, fno_modes: 32}
+  - run_id: smooth_lens__small
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      model: {nsno_blocks: 2, nsno_channels: 16, fno_modes: 8}
+  - run_id: smooth_lens__base
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      model: {nsno_blocks: 4, nsno_channels: 32, fno_modes: 16}
+  - run_id: smooth_lens__large
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      model: {nsno_blocks: 6, nsno_channels: 64, fno_modes: 24}
+  - run_id: smooth_lens__xlarge
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      model: {nsno_blocks: 8, nsno_channels: 96, fno_modes: 32}
+  - run_id: layered__base
+    overrides:
+      medium: {velocity_model: layered}
+      model: {nsno_blocks: 4, nsno_channels: 32, fno_modes: 16}
+  - run_id: layered__xlarge
+    overrides:
+      medium: {velocity_model: layered}
+      model: {nsno_blocks: 8, nsno_channels: 96, fno_modes: 32}

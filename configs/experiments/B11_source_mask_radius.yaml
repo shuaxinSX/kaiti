@@ -1,0 +1,74 @@
+# =============================================================================
+# B11_source_mask_radius.yaml
+# Experiment ID: B11
+# Purpose: sweep the source-hole radius that is already wired into rhs/loss masks.
+# Variable axes: loss.source_mask_radius × representative medium family
+# Fixed axes: provisional N=128, pml.width=16, omega=30, epochs=500
+# Expected runs: 8
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B11
+name: source_mask_radius
+status: active
+entrypoint: train
+purpose: Measure how the source-hole radius trades off near-source stability and physical-domain accuracy.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+expected_runs: 8
+variable_axes:
+  - loss.source_mask_radius = [1.0, 1.5, 2.0, 3.0]
+  - medium.velocity_model = [smooth_lens, layered]
+fixed:
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: smooth_lens__r10
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      loss: {source_mask_radius: 1.0}
+  - run_id: smooth_lens__r15
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      loss: {source_mask_radius: 1.5}
+  - run_id: smooth_lens__r20
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      loss: {source_mask_radius: 2.0}
+  - run_id: smooth_lens__r30
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      loss: {source_mask_radius: 3.0}
+  - run_id: layered__r10
+    overrides:
+      medium: {velocity_model: layered}
+      loss: {source_mask_radius: 1.0}
+  - run_id: layered__r15
+    overrides:
+      medium: {velocity_model: layered}
+      loss: {source_mask_radius: 1.5}
+  - run_id: layered__r20
+    overrides:
+      medium: {velocity_model: layered}
+      loss: {source_mask_radius: 2.0}
+  - run_id: layered__r30
+    overrides:
+      medium: {velocity_model: layered}
+      loss: {source_mask_radius: 3.0}
