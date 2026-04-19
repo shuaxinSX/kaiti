@@ -1169,9 +1169,11 @@ Gate 3 已开启。A3 与 A5 现在可以基于 `int/multi-agent` 中的 referen
 
 ### 16.6 Gate 4 — 训练闭环建立
 
-* [ ] A3 合并
-* [ ] `loss_data` 真正生效
-* [ ] 默认 PDE-only 保持不变
+* [x] A3 合并
+* [x] `loss_data` 真正生效
+* [x] 默认 PDE-only 保持不变
+
+Gate 4 已开启。A5 可基于 `int/multi-agent` 中已合并的 A2+A3 基线推进物理审计；A6 实验矩阵进入可启动状态。
 
 ### 16.7 Gate 5 — 物理审计
 
@@ -1272,7 +1274,7 @@ git merge int/multi-agent
 
 * 状态：`INTEGRATING`
 * Owner：`A0 / Codex`
-* 最近更新：`2026-04-18` 已合并并推送 A1、A2 到 `int/multi-agent`；当前集成头为 `e333678`
+* 最近更新：`2026-04-19` 已合并并推送 A1、A2、A3 到 `int/multi-agent`；当前集成头即将推进至 A3 merge commit，集成 smoke（pytest 125 passed / 1-epoch train / evaluate_run with reference）全部通过
 
 ### 20.2 A1 Packaging / CI
 
@@ -1288,9 +1290,9 @@ git merge int/multi-agent
 
 ### 20.4 A3 Hybrid Loss
 
-* 状态：`READY`
-* Owner：
-* 最近更新：`2026-04-18` A2 已 merged，reference 标签与指标基线已就位，可开工
+* 状态：`MERGED`
+* Owner：`A3 / Codex`
+* 最近更新：`2026-04-19` A3 已完成 DoD；5 提交（supervision/loader/loop/config/test/handoffs）合入 `int/multi-agent`，`Trainer.train()` 返回值契约保留、PDE-only 默认路径不变、data-only / hybrid / fail-fast 全部测试通过
 
 ### 20.5 A4 Docs / Project State
 
@@ -1306,9 +1308,9 @@ git merge int/multi-agent
 
 ### 20.7 A6 Experiment Matrix
 
-* 状态：`WAITING_GATE_4`
+* 状态：`READY`
 * Owner：
-* 最近更新：
+* 最近更新：`2026-04-19` Gate 4 已开，A1+A2+A3 基线已全部合入 `int/multi-agent`，可启动
 
 ---
 
