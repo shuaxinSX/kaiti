@@ -55,10 +55,12 @@
 │   └── _bootstrap.py / sitecustomize.py  # 服务器侧 import path
 ├── tests/                    # pytest 套件
 ├── notebooks/                # 可视化 notebook
+├── docs/
+│   ├── README.md             # 文档索引
+│   ├── theory/               # TeX 理论资料与研究草稿
+│   └── archive/              # 历史规范文档归档
 ├── reports/
 │   └── matrix/               # 实验矩阵报告（README + 快照命名的 EXPERIMENT_REPORT）
-├── handoffs/                 # 多 agent 交接记录（历史，已归档）
-├── docs/archive/             # 历史规范文档归档
 └── outputs/                  # 实验输出（gitignored，本地专用）
 ```
 

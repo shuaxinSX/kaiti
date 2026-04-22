@@ -291,11 +291,15 @@ L_total = λ_pde · L_pde + λ_data · L_data（如有标签）
 开题/
 ├── DEV_PLAN.md              # 本文档（开发规范）
 ├── CHANGELOG.md             # 变更记录
-├── document.tex             # 原始开发思路
-├── main.tex                 # 完整理论资料
 ├── configs/
 │   ├── base.yaml            # 默认参数
 │   └── debug.yaml           # 调试用小网格参数
+├── docs/
+│   ├── README.md            # 文档索引
+│   ├── theory/
+│   │   ├── document.tex     # 原始开发思路
+│   │   └── main.tex         # 完整理论资料
+│   └── archive/             # 历史协作文档归档
 ├── src/
 │   ├── __init__.py
 │   ├── core/
