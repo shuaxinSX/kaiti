@@ -5,6 +5,7 @@
 import argparse
 import json
 
+import _bootstrap  # noqa: F401
 from src.eval.reference_eval import solve_reference_from_config, solve_reference_from_run_dir
 from src.train.runner import configure_logging
 

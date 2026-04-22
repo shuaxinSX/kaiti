@@ -5,6 +5,7 @@
 import argparse
 import json
 
+import _bootstrap  # noqa: F401
 from src.train.runner import evaluate_saved_run
 
 
