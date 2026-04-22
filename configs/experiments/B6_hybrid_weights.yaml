@@ -1,0 +1,92 @@
+# =============================================================================
+# B6_hybrid_weights.yaml
+# Experiment ID: B6
+# Purpose: sweep PDE/data weighting once the baseline grid is fixed.
+# Variable axes: (lambda_pde, lambda_data) × representative medium family
+# Fixed axes: provisional N=128, pml.width=16, omega=30, epochs=500
+# Expected runs: 10
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B6
+name: hybrid_weights
+status: active
+entrypoint: train
+purpose: Stress the A3 hybrid interface under different PDE/data trade-offs.
+gate: Gate 6 / A6
+depends_on:
+  - B3
+expected_runs: 10
+variable_axes:
+  - (lambda_pde, lambda_data) = [(1,1), (1,10), (10,1), (1,0.1), (0.1,1)]
+  - medium.velocity_model = [smooth_lens, layered]
+fixed:
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 1.0
+    supervision:
+      enabled: true
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: smooth_lens__lp1__ld1
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      training: {lambda_pde: 1.0, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: smooth_lens__lp1__ld10
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      training: {lambda_pde: 1.0, lambda_data: 10.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: smooth_lens__lp10__ld1
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      training: {lambda_pde: 10.0, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: smooth_lens__lp1__ld01
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      training: {lambda_pde: 1.0, lambda_data: 0.1}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: smooth_lens__lp01__ld1
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      training: {lambda_pde: 0.1, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: layered__lp1__ld1
+    overrides:
+      medium: {velocity_model: layered}
+      training: {lambda_pde: 1.0, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: layered__lp1__ld10
+    overrides:
+      medium: {velocity_model: layered}
+      training: {lambda_pde: 1.0, lambda_data: 10.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: layered__lp10__ld1
+    overrides:
+      medium: {velocity_model: layered}
+      training: {lambda_pde: 10.0, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: layered__lp1__ld01
+    overrides:
+      medium: {velocity_model: layered}
+      training: {lambda_pde: 1.0, lambda_data: 0.1}
+    reference_prep: {enabled: true, label_name: matched}
+  - run_id: layered__lp01__ld1
+    overrides:
+      medium: {velocity_model: layered}
+      training: {lambda_pde: 0.1, lambda_data: 1.0}
+    reference_prep: {enabled: true, label_name: matched}

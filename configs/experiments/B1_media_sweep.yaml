@@ -1,0 +1,80 @@
+# =============================================================================
+# B1_media_sweep.yaml
+# Experiment ID: B1
+# Purpose: compare medium families under PDE-only and hybrid supervision.
+# Variable axes: medium.velocity_model × supervision_mode
+# Fixed axes: omega=30, grid=128x128, pml.width=20, epochs=500, base model
+# Expected runs: 6
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B1
+name: media_sweep
+status: active
+entrypoint: train
+purpose: Establish medium-family baselines before larger sweeps.
+gate: Gate 6 / A6
+expected_runs: 6
+variable_axes:
+  - medium.velocity_model = [homogeneous, smooth_lens, layered]
+  - supervision_mode = [pde, hybrid]
+fixed:
+  physics:
+    omega: 30.0
+  grid:
+    nx: 128
+    ny: 128
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: homogeneous__pde__ep500
+    overrides:
+      medium:
+        velocity_model: homogeneous
+  - run_id: homogeneous__hybrid__ep500
+    overrides:
+      medium:
+        velocity_model: homogeneous
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched
+  - run_id: smooth_lens__pde__ep500
+    overrides:
+      medium:
+        velocity_model: smooth_lens
+  - run_id: smooth_lens__hybrid__ep500
+    overrides:
+      medium:
+        velocity_model: smooth_lens
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched
+  - run_id: layered__pde__ep500
+    overrides:
+      medium:
+        velocity_model: layered
+  - run_id: layered__hybrid__ep500
+    overrides:
+      medium:
+        velocity_model: layered
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched

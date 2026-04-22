@@ -1,0 +1,80 @@
+# =============================================================================
+# B2_frequency_sweep.yaml
+# Experiment ID: B2
+# Purpose: quantify frequency scaling and identify the high-k failure edge.
+# Variable axes: physics.omega ∈ {15, 20, 30, 40, 50, 60, 75, 90}, with two hybrid probes
+# Fixed axes: medium=smooth_lens, grid=128x128, pml.width=20, epochs=500
+# Expected runs: 10
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B2
+name: frequency_sweep
+status: active
+entrypoint: train
+purpose: Map accuracy decay against omega while keeping the grid fixed.
+gate: Gate 6 / A6
+expected_runs: 10
+variable_axes:
+  - physics.omega = [15, 20, 30, 40, 50, 60, 75, 90]
+  - supervision_mode probe at omega = [60, 90]
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  grid:
+    nx: 128
+    ny: 128
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: smooth_lens__omega15__pde
+    overrides:
+      physics: {omega: 15.0}
+  - run_id: smooth_lens__omega20__pde
+    overrides:
+      physics: {omega: 20.0}
+  - run_id: smooth_lens__omega30__pde
+    overrides:
+      physics: {omega: 30.0}
+  - run_id: smooth_lens__omega40__pde
+    overrides:
+      physics: {omega: 40.0}
+  - run_id: smooth_lens__omega50__pde
+    overrides:
+      physics: {omega: 50.0}
+  - run_id: smooth_lens__omega60__pde
+    overrides:
+      physics: {omega: 60.0}
+  - run_id: smooth_lens__omega75__pde
+    overrides:
+      physics: {omega: 75.0}
+  - run_id: smooth_lens__omega90__pde
+    overrides:
+      physics: {omega: 90.0}
+  - run_id: smooth_lens__omega60__hybrid
+    overrides:
+      physics: {omega: 60.0}
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched
+  - run_id: smooth_lens__omega90__hybrid
+    overrides:
+      physics: {omega: 90.0}
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched

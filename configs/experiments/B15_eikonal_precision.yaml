@@ -1,0 +1,44 @@
+# =============================================================================
+# B15_eikonal_precision.yaml
+# Experiment ID: B15
+# Purpose: compare eikonal precision modes once the runtime actually consumes them.
+# Variable axes: eikonal.precision × representative medium family
+# Fixed axes: representative smooth_lens/layered baseline
+# Expected runs: 4
+# Gate: Gate 6 / A6
+# Status: blocked
+# =============================================================================
+
+batch_id: B15
+name: eikonal_precision
+status: blocked
+blocked_reason: eikonal.precision exists in base.yaml but is not consumed by the current eikonal implementation.
+entrypoint: train
+purpose: Reserved until A7 exposes precision as a real runtime axis.
+gate: Gate 6 / A6
+depends_on:
+  - A7
+expected_runs: 4
+variable_axes:
+  - eikonal.precision = [float32, float64]
+  - medium.velocity_model = [smooth_lens, layered]
+fixed:
+  training:
+    epochs: 500
+matrix:
+  - run_id: smooth_lens__float32
+    status: blocked
+    blocked_reason: eikonal.precision is not wired.
+    overrides: {}
+  - run_id: smooth_lens__float64
+    status: blocked
+    blocked_reason: eikonal.precision is not wired.
+    overrides: {}
+  - run_id: layered__float32
+    status: blocked
+    blocked_reason: eikonal.precision is not wired.
+    overrides: {}
+  - run_id: layered__float64
+    status: blocked
+    blocked_reason: eikonal.precision is not wired.
+    overrides: {}

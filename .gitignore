@@ -40,3 +40,9 @@ outputs/
 
 # 临时文件
 tmp/
+
+# 服务器端 vendored 依赖
+.vendor_sx/
+
+# Windows 批处理（服务器本地专用，不入库）
+*.cmd

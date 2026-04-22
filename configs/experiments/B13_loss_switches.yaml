@@ -1,0 +1,44 @@
+# =============================================================================
+# B13_loss_switches.yaml
+# Experiment ID: B13
+# Purpose: audit latent loss toggles that exist in base.yaml but are not wired today.
+# Variable axes: loss.omega2_normalize × loss.pml_rhs_zero
+# Fixed axes: representative smooth_lens baseline
+# Expected runs: 4
+# Gate: Gate 6 / A6
+# Status: blocked
+# =============================================================================
+
+batch_id: B13
+name: loss_switches
+status: blocked
+blocked_reason: loss.omega2_normalize and loss.pml_rhs_zero exist in base.yaml but are not consumed by the current residual path.
+entrypoint: train
+purpose: Reserved until A7 wires the dormant loss toggles into the runtime.
+gate: Gate 6 / A6
+depends_on:
+  - A7
+expected_runs: 4
+variable_axes:
+  - loss.omega2_normalize = [true, false]
+  - loss.pml_rhs_zero = [true, false]
+fixed:
+  medium:
+    velocity_model: smooth_lens
+matrix:
+  - run_id: normalize_on__rhs_zero_on
+    status: blocked
+    blocked_reason: loss toggles are not wired.
+    overrides: {}
+  - run_id: normalize_on__rhs_zero_off
+    status: blocked
+    blocked_reason: loss toggles are not wired.
+    overrides: {}
+  - run_id: normalize_off__rhs_zero_on
+    status: blocked
+    blocked_reason: loss toggles are not wired.
+    overrides: {}
+  - run_id: normalize_off__rhs_zero_off
+    status: blocked
+    blocked_reason: loss toggles are not wired.
+    overrides: {}
