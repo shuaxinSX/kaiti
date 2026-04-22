@@ -1,0 +1,76 @@
+# =============================================================================
+# B14_label_mismatch.yaml
+# Experiment ID: B14
+# Purpose: measure how hybrid training reacts to plausible but wrong labels.
+# Variable axes: reference label physics mismatch
+# Fixed axes: smooth_lens, provisional N=128, pml.width=16, omega=30, hybrid
+# Expected runs: 4
+# Gate: Gate 6 / A6
+# Status: active
+# =============================================================================
+
+batch_id: B14
+name: label_mismatch
+status: active
+entrypoint: train
+purpose: Compare clean labels against same-shape but physically mismatched labels.
+gate: Gate 6 / A6
+depends_on:
+  - B10
+expected_runs: 4
+variable_axes:
+  - matched label
+  - omega-drift label
+  - medium-swap label
+  - source-shift label
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  physics:
+    omega: 30.0
+    source_pos: [0.5, 0.5]
+  grid:
+    nx: 128
+    ny: 128
+  pml:
+    width: 16
+  training:
+    epochs: 500
+    lr: 1.0e-3
+    lambda_pde: 1.0
+    lambda_data: 1.0
+    supervision:
+      enabled: true
+      reference_path: null
+  logging:
+    level: INFO
+matrix:
+  - run_id: clean
+    overrides: {}
+    reference_prep:
+      enabled: true
+      label_name: matched
+  - run_id: omega_drift
+    overrides: {}
+    reference_prep:
+      enabled: true
+      label_name: omega33
+      config_overrides:
+        physics:
+          omega: 33.0
+  - run_id: medium_swap
+    overrides: {}
+    reference_prep:
+      enabled: true
+      label_name: homogeneous_label
+      config_overrides:
+        medium:
+          velocity_model: homogeneous
+  - run_id: source_shift
+    overrides: {}
+    reference_prep:
+      enabled: true
+      label_name: source_shift
+      config_overrides:
+        physics:
+          source_pos: [0.75, 0.5]
