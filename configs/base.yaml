@@ -75,6 +75,10 @@ training:
   batch_size: 1                  # 当前单样本
   lambda_pde: 1.0                # PDE Loss 权重
   lambda_data: 0.0               # 数据 Loss 权重（无监督标签时为 0）
+  supervision:
+    enabled: false
+    reference_path: null
+    target_kind: "scattering_envelope"  # 仅允许离线相位剥离后的散射包络标签
 
 # -----------------------------------------------------------------------------
 # 日志与输出

@@ -200,6 +200,7 @@ def build_reference_plan(
     training_cfg["lambda_data"] = 0.0
     supervision_cfg["enabled"] = False
     supervision_cfg["reference_path"] = None
+    supervision_cfg["target_kind"] = "scattering_envelope"
 
     cache_key = stable_config_hash(reference_config)
     cfg_path = meta_root / "generated_configs" / batch_slug / f"{run_spec['run_id']}__reference.yaml"
@@ -257,6 +258,7 @@ def build_manifest_rows(
                 merged["training"].setdefault("supervision", {})
                 merged["training"]["supervision"]["enabled"] = True
                 merged["training"]["supervision"]["reference_path"] = str(reference["reference_path"])
+                merged["training"]["supervision"]["target_kind"] = "scattering_envelope"
 
             cfg_path = meta_root / "generated_configs" / batch_slug / f"{run_id}.yaml"
             dump_yaml(cfg_path, merged)

@@ -98,6 +98,7 @@ class TestConfig:
         assert cfg.pml.power == 2
         assert cfg.eikonal.precision == "float64"
         assert cfg.residual.lap_tau_mode == "stretched_divergence"
+        assert cfg.training.supervision.target_kind == "scattering_envelope"
 
     def test_config_file_not_found(self):
         from src.config import load_config

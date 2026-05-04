@@ -18,6 +18,7 @@ def test_load_config_base_only():
     assert cfg.physics.omega == 30.0
     assert cfg.grid.nx == 128
     assert cfg.residual.lap_tau_mode == "stretched_divergence"
+    assert cfg.training.supervision.target_kind == "scattering_envelope"
 
 
 def test_load_config_single_overlay():

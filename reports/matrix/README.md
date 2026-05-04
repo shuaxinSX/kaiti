@@ -19,6 +19,7 @@ Current A6 rules:
 - Summary scripts only read persisted artifacts. Missing fields stay blank instead of being recomputed from hidden state.
 - `loss_pde` / `loss_data` are currently available as final-step decompositions in the report layer; full per-epoch histories remain blocked until A7 extends upstream loss persistence beyond the legacy two-column `losses.csv`.
 - Reference-label caches are keyed by a stable hash of the fully materialized reference config so changed label-generation overrides do not silently reuse stale outputs.
+- Hybrid data supervision must consume the offline phase-stripped `reference_envelope.npy` artifact with `training.supervision.target_kind=scattering_envelope`; full-wavefield artifacts are not valid training labels.
 
 Runtime support status after the strict PML residual wiring:
 - `residual.lap_tau_mode`: now read from config by `Trainer`; default is `stretched_divergence`, with `mixed_legacy` retained for explicit audit runs.

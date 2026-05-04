@@ -144,6 +144,7 @@ class Trainer:
         supervision_cfg = resolve_supervision_config(cfg)
         self.lambda_pde = supervision_cfg["lambda_pde"]
         self.lambda_data = supervision_cfg["lambda_data"]
+        self.supervision_target_kind = supervision_cfg["target_kind"]
         self.supervision_enabled = False
         self.reference_path = supervision_cfg["reference_path"]
         self.reference_target = None

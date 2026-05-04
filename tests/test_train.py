@@ -12,6 +12,7 @@ import pytest
 from src.config import load_config
 from src.train.trainer import Trainer, build_network_input, resolve_residual_config
 from src.train.losses import loss_data, loss_total
+from src.train.supervision import resolve_supervision_config
 
 
 @pytest.fixture
@@ -135,8 +136,17 @@ class TestTrainer:
 
         assert isinstance(losses, list)
         assert trainer.supervision_enabled is False
+        assert trainer.supervision_target_kind == "scattering_envelope"
         assert trainer.reference_target is None
         assert trainer.loss_history_data == [0.0]
+
+    def test_supervision_defaults_to_scattering_envelope(self, cfg_homogeneous):
+        """监督目标默认锁定为离线相位剥离的散射包络。"""
+        cfg = copy.deepcopy(cfg_homogeneous)
+
+        supervision_cfg = resolve_supervision_config(cfg)
+
+        assert supervision_cfg["target_kind"] == "scattering_envelope"
 
     def test_data_only_training_uses_reference_target(self, cfg_homogeneous, tmp_path):
         """data-only 路径会加载 reference_envelope 并计算监督损失。"""
@@ -154,6 +164,7 @@ class TestTrainer:
         losses = trainer.train(epochs=3)
 
         assert trainer.supervision_enabled is True
+        assert trainer.supervision_target_kind == "scattering_envelope"
         assert trainer.reference_target.shape == (1, 2, *_grid_shape(cfg))
         assert len(losses) == 3
         assert trainer.loss_history_data[0] > 0.0
@@ -199,6 +210,35 @@ class TestTrainer:
         }
 
         with pytest.raises(FileNotFoundError, match="Reference envelope file"):
+            Trainer(cfg)
+
+    def test_supervision_rejects_full_wavefield_target_kind(self, cfg_homogeneous, tmp_path):
+        """data loss 不允许声明为全波场监督目标。"""
+        cfg = copy.deepcopy(cfg_homogeneous)
+        reference_path = tmp_path / "reference_envelope.npy"
+        _write_reference_envelope(reference_path, _grid_shape(cfg))
+        cfg.training.lambda_data = 1.0
+        cfg.training.supervision = {
+            "enabled": True,
+            "reference_path": str(reference_path),
+            "target_kind": "full_wavefield",
+        }
+
+        with pytest.raises(ValueError, match="target_kind"):
+            Trainer(cfg)
+
+    def test_supervision_rejects_reference_wavefield_path(self, cfg_homogeneous, tmp_path):
+        """data loss 不允许误接 reference_wavefield.npy。"""
+        cfg = copy.deepcopy(cfg_homogeneous)
+        reference_path = tmp_path / "reference_wavefield.npy"
+        _write_reference_envelope(reference_path, _grid_shape(cfg))
+        cfg.training.lambda_data = 1.0
+        cfg.training.supervision = {
+            "enabled": True,
+            "reference_path": str(reference_path),
+        }
+
+        with pytest.raises(ValueError, match="not a wavefield artifact"):
             Trainer(cfg)
 
     def test_reference_shape_mismatch_fails_fast(self, cfg_homogeneous, tmp_path):
