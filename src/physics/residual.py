@@ -33,7 +33,7 @@ class ResidualComputer:
         loss_mask,
         omega,
         diff_ops,
-        lap_tau_mode="mixed_legacy",
+        lap_tau_mode="stretched_divergence",
     ):
         """
         Args:

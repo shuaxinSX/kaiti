@@ -27,6 +27,15 @@ from src.train.supervision import load_reference_target, resolve_supervision_con
 logger = logging.getLogger(__name__)
 
 
+def resolve_residual_config(cfg):
+    """Parse residual options with strict PML stretching as the default."""
+    residual_cfg = cfg.residual if hasattr(cfg, "residual") else None
+    lap_tau_mode = "stretched_divergence"
+    if residual_cfg is not None and hasattr(residual_cfg, "lap_tau_mode"):
+        lap_tau_mode = residual_cfg.lap_tau_mode
+    return {"lap_tau_mode": lap_tau_mode}
+
+
 def resolve_device(requested_device=None):
     """Resolve an execution device while keeping CPU as the backward-compatible default."""
     if requested_device is None:
@@ -111,11 +120,13 @@ class Trainer:
         )
         self.loss_mask = compute_loss_mask(self.grid, self.source, cfg)
         self.omega = omega
+        residual_cfg = resolve_residual_config(cfg)
 
         # 残差计算器
         self.residual_computer = ResidualComputer(
             self.grid, self.pml, self.tau_d, self.rhs,
             self.loss_mask, omega, self.diff_ops,
+            lap_tau_mode=residual_cfg["lap_tau_mode"],
         ).to(self.device)
 
         # 网络输入
@@ -155,12 +166,13 @@ class Trainer:
             )
 
         logger.info(
-            "预处理完成。网格: %dx%d, ω=%.1f, device=%s, supervision=%s",
+            "预处理完成。网格: %dx%d, ω=%.1f, device=%s, supervision=%s, lap_tau_mode=%s",
             self.grid.nx_total,
             self.grid.ny_total,
             omega,
             self.device,
             self.supervision_enabled,
+            self.residual_computer.lap_tau_mode,
         )
 
     def train(self, epochs=None):

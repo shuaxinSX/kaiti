@@ -20,11 +20,18 @@ Current A6 rules:
 - `loss_pde` / `loss_data` are currently available as final-step decompositions in the report layer; full per-epoch histories remain blocked until A7 extends upstream loss persistence beyond the legacy two-column `losses.csv`.
 - Reference-label caches are keyed by a stable hash of the fully materialized reference config so changed label-generation overrides do not silently reuse stale outputs.
 
-Blocked axes in the current integrated baseline:
+Runtime support status after the strict PML residual wiring:
+- `residual.lap_tau_mode`: now read from config by `Trainer`; default is `stretched_divergence`, with `mixed_legacy` retained for explicit audit runs.
+
+Still-blocked axes in the current integrated baseline:
 - `training.seed`: not exposed in `configs/base.yaml` or CLI, so seed sweeps stay blocked.
-- `residual.lap_tau_mode`: implemented inside `ResidualComputer` but not wired from config into training.
 - `loss.omega2_normalize` and `loss.pml_rhs_zero`: present in `base.yaml` but not consumed by the current residual path.
 - `eikonal.precision`: present in `base.yaml` but not consumed by the current eikonal path.
+
+Note: older A6 reports and the historical B9 batch file may still describe
+`residual.lap_tau_mode` as blocked because they were generated before this
+runtime wiring change. Reactivating B9 as a fresh matrix batch should be a
+separate spec update.
 
 Primary entrypoints:
 - `scripts/run_matrix.py`: local full-matrix launcher using `configs/experiments/B*.yaml`

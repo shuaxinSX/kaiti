@@ -10,7 +10,7 @@ import torch
 import pytest
 
 from src.config import load_config
-from src.train.trainer import Trainer, build_network_input
+from src.train.trainer import Trainer, build_network_input, resolve_residual_config
 from src.train.losses import loss_data, loss_total
 
 
@@ -110,6 +110,16 @@ class TestTrainer:
         assert next(trainer.model.parameters()).device.type == "cpu"
         assert trainer.net_input.device.type == "cpu"
         assert trainer.residual_computer.device.type == "cpu"
+
+    def test_trainer_reads_residual_lap_tau_mode(self, cfg_homogeneous):
+        """Trainer 从配置读取 residual.lap_tau_mode。"""
+        cfg = copy.deepcopy(cfg_homogeneous)
+        assert resolve_residual_config(cfg)["lap_tau_mode"] == "stretched_divergence"
+
+        cfg.residual.lap_tau_mode = "mixed_legacy"
+        trainer = Trainer(cfg, device="cpu")
+
+        assert trainer.residual_computer.lap_tau_mode == "mixed_legacy"
 
     def test_pde_only_ignores_supervision_when_lambda_data_zero(self, cfg_homogeneous, tmp_path):
         """lambda_data=0 时即使 supervision 打开，也保持 PDE-only。"""

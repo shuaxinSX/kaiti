@@ -68,7 +68,7 @@ class TestConfig:
         assert isinstance(data, dict)
         # 验证必需的顶级键
         required_keys = ["physics", "grid", "medium", "pml", "eikonal",
-                         "model", "loss", "training", "logging"]
+                         "model", "loss", "residual", "training", "logging"]
         for key in required_keys:
             assert key in data, f"base.yaml 缺少顶级键: {key}"
 
@@ -97,6 +97,7 @@ class TestConfig:
         assert cfg.pml.width == 20
         assert cfg.pml.power == 2
         assert cfg.eikonal.precision == "float64"
+        assert cfg.residual.lap_tau_mode == "stretched_divergence"
 
     def test_config_file_not_found(self):
         from src.config import load_config

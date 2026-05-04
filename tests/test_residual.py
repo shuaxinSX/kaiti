@@ -3,6 +3,7 @@ tests/test_residual.py — PDE 残差前向检查
 """
 
 from pathlib import Path
+import copy
 
 import torch
 import numpy as np
@@ -37,8 +38,17 @@ def cfg_lens():
     return cfg
 
 
-def _build_pipeline(cfg, lap_tau_mode="mixed_legacy"):
+def _resolve_lap_tau_mode(cfg, lap_tau_mode=None):
+    if lap_tau_mode is not None:
+        return lap_tau_mode
+    if hasattr(cfg, "residual") and hasattr(cfg.residual, "lap_tau_mode"):
+        return cfg.residual.lap_tau_mode
+    return "stretched_divergence"
+
+
+def _build_pipeline(cfg, lap_tau_mode=None):
     """构建完整预处理管线。"""
+    lap_tau_mode = _resolve_lap_tau_mode(cfg, lap_tau_mode)
     grid = Grid2D(cfg)
     medium = Medium2D(grid, cfg)
     source = PointSource(grid, cfg)
@@ -56,19 +66,11 @@ def _build_pipeline(cfg, lap_tau_mode="mixed_legacy"):
     return rc, grid
 
 
-def _build_trainer(cfg, lap_tau_mode="mixed_legacy"):
+def _build_trainer(cfg, lap_tau_mode=None):
+    cfg = copy.deepcopy(cfg)
+    if lap_tau_mode is not None:
+        cfg.residual.lap_tau_mode = lap_tau_mode
     trainer = Trainer(cfg, device="cpu")
-    if lap_tau_mode != "mixed_legacy":
-        trainer.residual_computer = ResidualComputer(
-            trainer.grid,
-            trainer.pml,
-            trainer.tau_d,
-            trainer.rhs,
-            trainer.loss_mask,
-            trainer.omega,
-            trainer.diff_ops,
-            lap_tau_mode=lap_tau_mode,
-        ).to(trainer.device)
     return trainer
 
 
@@ -158,18 +160,26 @@ class TestResidualComputer:
 class TestResidualPMLHeterogeneous:
     """PML 激活 + 非均匀介质下的残差测试。"""
 
-    def test_default_mode_matches_explicit_legacy(self, cfg_lens, pipeline_lens):
-        """默认路径应与显式 mixed_legacy 完全一致。"""
+    def test_default_mode_matches_configured_stretched_divergence(self, cfg_lens, pipeline_lens):
+        """默认配置路径应使用严格 stretched_divergence。"""
         rc_default, grid = pipeline_lens
-        rc_legacy, _ = _build_pipeline(cfg_lens, lap_tau_mode="mixed_legacy")
+        rc_candidate, _ = _build_pipeline(cfg_lens, lap_tau_mode="stretched_divergence")
         A_scat = torch.randn(1, 2, grid.ny_total, grid.nx_total) * 0.01
         result_default = rc_default.compute(A_scat)
-        result_legacy = rc_legacy.compute(A_scat)
-        assert rc_default.lap_tau_mode == "mixed_legacy"
-        assert torch.allclose(rc_default.lap_tau_c, rc_legacy.lap_tau_c)
-        assert torch.allclose(result_default["residual_real"], result_legacy["residual_real"])
-        assert torch.allclose(result_default["residual_imag"], result_legacy["residual_imag"])
-        assert result_default["loss_pde"].item() == pytest.approx(result_legacy["loss_pde"].item())
+        result_candidate = rc_candidate.compute(A_scat)
+        assert rc_default.lap_tau_mode == "stretched_divergence"
+        assert torch.allclose(rc_default.lap_tau_c, rc_candidate.lap_tau_c)
+        assert torch.allclose(result_default["residual_real"], result_candidate["residual_real"])
+        assert torch.allclose(result_default["residual_imag"], result_candidate["residual_imag"])
+        assert result_default["loss_pde"].item() == pytest.approx(result_candidate["loss_pde"].item())
+
+    def test_mixed_legacy_remains_explicit_audit_mode(self, cfg_lens):
+        """mixed_legacy 仍可显式启用以回放历史 A5/A6 结果。"""
+        rc_legacy, _ = _build_pipeline(cfg_lens, lap_tau_mode="mixed_legacy")
+        rc_candidate, _ = _build_pipeline(cfg_lens, lap_tau_mode="stretched_divergence")
+        assert rc_legacy.lap_tau_mode == "mixed_legacy"
+        assert rc_candidate.lap_tau_mode == "stretched_divergence"
+        assert not torch.allclose(rc_legacy.lap_tau_c, rc_candidate.lap_tau_c)
 
     def test_lens_forward_no_nan(self, pipeline_lens):
         """smooth_lens 介质 + PML 激活：残差不含 NaN/Inf。"""
