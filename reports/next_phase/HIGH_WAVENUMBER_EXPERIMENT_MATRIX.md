@@ -42,6 +42,534 @@
 - `loss.omega2_normalize`：配置存在，但 residual path 未消费。
 - `loss.pml_rhs_zero`：配置存在，但 residual path 未消费。
 
+## 2.1 相关配置总表
+
+所有实验均以 `configs/base.yaml` 为底座，通过 `configs/experiments/*.yaml` 的 `fixed` 与单个 run 的 `overrides` 覆盖。矩阵设计时只应把当前 runtime 已消费的字段作为有效实验轴。
+
+### 2.1.1 物理与网格配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `physics.omega` | `30.0` | 是 | 圆频率，高波数实验的主轴。 |
+| `physics.source_pos` | `[0.5, 0.5]` | 是 | 点源位置，用于源位置鲁棒性与近边界退化测试。 |
+| `grid.domain` | `[0.0, 1.0, 0.0, 1.0]` | 暂不建议 | 当前理论量纲和 ppw 估算都以单位正方形为默认。 |
+| `grid.nx` | `128` | 是 | 物理域 x 方向格点数，不含 PML。 |
+| `grid.ny` | `128` | 是 | 物理域 y 方向格点数，不含 PML；目前建议与 `nx` 同步扫描。 |
+| `medium.c_background` | `1.0` | 暂不建议 | 背景波速；改动会影响所有 `omega*s0*h` 预算，建议后期单独做物理量纲测试。 |
+| `medium.velocity_model` | `homogeneous` | 是 | 介质族：`homogeneous` / `smooth_lens` / `layered`。 |
+
+高波数实验中 `grid.nx = grid.ny = N` 不应随便取值，而应从 `ppw` 反推：
+
+```text
+h = 1 / N
+ppw = 2*pi / (omega * s0 * h)
+N ~= ppw * omega * s0 / (2*pi)
+```
+
+在当前 `s0≈1` 下，推荐按以下规则选网格：
+
+| 实验目的 | 推荐 ppw | 适用 omega |
+|---|---:|---|
+| 快速扫描 / 失败边界 | 8 | 60-180 |
+| 主结果 baseline | 12 | 60-240 |
+| 可信高波数结果 | 16 | 90-300 |
+| reference-only 或 finalist | 24 | 120-300 |
+
+### 2.1.2 PML 与 residual 配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `pml.width` | `20` | 是 | PML 厚度，单位为格点数。 |
+| `pml.power` | `2` | 是 | PML 阻尼剖面幂次。 |
+| `pml.R0` | `1.0e-6` | 是 | PML 目标反射系数，用于决定最大阻尼。 |
+| `residual.lap_tau_mode` | `stretched_divergence` | 是 | `tau` 在 PML 内的拉普拉斯装配策略。 |
+
+`residual.lap_tau_mode` 只能取：
+
+```yaml
+residual:
+  lap_tau_mode: stretched_divergence  # 主结果默认，严格复拉伸
+```
+
+或：
+
+```yaml
+residual:
+  lap_tau_mode: mixed_legacy          # 仅用于消融审计，不作为最终方法
+```
+
+高频主结果建议固定为：
+
+```yaml
+pml:
+  width: 24        # N<=192 可先用 16；N>=256 建议 24 或 32
+  power: 2
+  R0: 1.0e-6
+residual:
+  lap_tau_mode: stretched_divergence
+```
+
+PML 消融时再扫描：
+
+```yaml
+pml:
+  width: [8, 16, 24, 32, 48]
+  power: [1, 2, 3]
+  R0: [1.0e-4, 1.0e-6, 1.0e-8]
+```
+
+### 2.1.3 Eikonal 配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `eikonal.fsm_max_iter` | `100` | 是，但不建议大扫 | FSM 最大扫描轮次。 |
+| `eikonal.fsm_tol` | `1.0e-10` | 是，但不建议大扫 | FSM 收敛阈值。 |
+| `eikonal.source_freeze_radius` | `1` | 谨慎 | 震源冻结半径，影响近场和穿孔区。 |
+| `eikonal.precision` | `float64` | 否 | 配置存在，但当前 runtime 未实际消费。 |
+
+高波数主实验建议固定：
+
+```yaml
+eikonal:
+  fsm_max_iter: 100
+  fsm_tol: 1.0e-10
+  source_freeze_radius: 1
+  precision: float64  # 文档保留；当前不作为有效轴解释结果
+```
+
+不要把 `eikonal.precision` 的结果写成论文结论，除非后续代码把它真正接入 FSM。
+
+### 2.1.4 模型容量配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `model.nsno_blocks` | `4` | 是 | NSNO 深度，对应 Neumann/Born 多重散射阶数。 |
+| `model.nsno_channels` | `32` | 是 | 隐层通道数，控制 pointwise mixing 容量。 |
+| `model.fno_modes` | `16` | 是 | SpectralConv 保留的 Fourier modes。 |
+| `model.activation` | `gelu` | 谨慎 | 激活函数，当前不作为主论证轴。 |
+
+建议把模型容量拆成三个独立实验，不要一次性混扫：
+
+```yaml
+# Depth sweep: 验证 Neumann 散射阶数瓶颈
+model:
+  nsno_blocks: [2, 4, 6, 8, 12, 16]
+  nsno_channels: 64
+  fno_modes: 16
+  activation: gelu
+```
+
+```yaml
+# Mode sweep: 验证相位剥离后 M 是否已经解绑高频 Nyquist
+model:
+  nsno_blocks: 8
+  nsno_channels: 64
+  fno_modes: [4, 8, 12, 16, 24, 32]
+  activation: gelu
+```
+
+```yaml
+# Channel sweep: 验证点乘/非线性混合容量是否不足
+model:
+  nsno_blocks: 8
+  nsno_channels: [16, 32, 64, 96, 128]
+  fno_modes: 16
+  activation: gelu
+```
+
+### 2.1.5 Loss 与监督配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `loss.source_mask_radius` | `1.5` | 是 | 震源穿孔半径，单位为 `h`。 |
+| `loss.pml_rhs_zero` | `true` | 否 | 配置存在，但当前 residual path 未消费。 |
+| `loss.omega2_normalize` | `true` | 否 | 配置存在，但当前 residual path 未消费。 |
+| `training.lambda_pde` | `1.0` | 是 | PDE residual loss 权重。 |
+| `training.lambda_data` | `0.0` | 是 | envelope data loss 权重。 |
+| `training.supervision.enabled` | `false` | 是 | 是否启用离线参考标签监督。 |
+| `training.supervision.reference_path` | `null` | 是 | `reference_envelope.npy` 路径；矩阵脚本可自动生成。 |
+| `training.supervision.target_kind` | `scattering_envelope` | 固定 | 只允许相位剥离后的散射包络标签。 |
+
+PDE-only 配置：
+
+```yaml
+training:
+  lambda_pde: 1.0
+  lambda_data: 0.0
+  supervision:
+    enabled: false
+    reference_path: null
+    target_kind: scattering_envelope
+```
+
+Data-only 配置：
+
+```yaml
+training:
+  lambda_pde: 0.0
+  lambda_data: 1.0
+  supervision:
+    enabled: true
+    reference_path: /path/to/reference_envelope.npy
+    target_kind: scattering_envelope
+```
+
+Hybrid 配置：
+
+```yaml
+training:
+  lambda_pde: 1.0
+  lambda_data: 1.0
+  supervision:
+    enabled: true
+    reference_path: /path/to/reference_envelope.npy
+    target_kind: scattering_envelope
+```
+
+在 `scripts/run_matrix.py` 的矩阵文件中，推荐使用 `reference_prep` 自动生成标签，而不是手写 `reference_path`：
+
+```yaml
+matrix:
+  - run_id: smooth_lens__omega90__hybrid
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      physics: {omega: 90.0}
+      training:
+        lambda_pde: 1.0
+        lambda_data: 1.0
+    reference_prep:
+      enabled: true
+      label_name: matched
+```
+
+启动器会先运行 `scripts/solve_reference.py` 生成：
+
+```text
+<output-root>/_reference_cache/<batch>/<run>/<label>__<hash>/reference_envelope.npy
+```
+
+然后把该路径写入训练 run 的有效配置。
+
+### 2.1.6 训练与日志配置
+
+| YAML key | 默认值 | 当前是否可作为矩阵轴 | 作用 |
+|---|---:|---|---|
+| `training.lr` | `1.0e-3` | 是 | 学习率。 |
+| `training.epochs` | `1000` | 是 | 训练轮次。 |
+| `training.batch_size` | `1` | 暂不建议 | 当前单样本路径，先不要作为主轴。 |
+| `logging.level` | `INFO` | 否 | 日志级别。 |
+| `logging.save_dir` | `outputs` | 否 | 单次训练默认输出目录；矩阵脚本用 `--output-root` 接管。 |
+| `logging.save_interval` | `100` | 可固定 | checkpoint / 日志保存间隔。 |
+
+高波数长训建议：
+
+```yaml
+training:
+  lr: 3.0e-4
+  epochs: 5000
+  batch_size: 1
+```
+
+最终 finalist 可使用命令行统一覆盖：
+
+```bash
+python scripts/run_matrix.py \
+  --output-root outputs/highk_round3_finalists \
+  --device cuda:0 \
+  --epochs-override 20000 \
+  --continue-on-error
+```
+
+## 2.2 矩阵 YAML 文件写法
+
+当前矩阵启动器读取：
+
+```text
+configs/experiments/B*.yaml
+```
+
+每个实验批次文件的结构应保持如下：
+
+```yaml
+batch_id: C1
+name: highk_scaling_ppw16
+status: active
+entrypoint: train              # train 或 reference_only
+purpose: Fixed-ppw frequency scaling for high-wavenumber regime.
+expected_runs: 5
+
+fixed:
+  medium:
+    velocity_model: smooth_lens
+  pml:
+    power: 2
+    R0: 1.0e-6
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 8
+    nsno_channels: 64
+    fno_modes: 16
+  training:
+    epochs: 5000
+    lr: 3.0e-4
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+
+matrix:
+  - run_id: omega060__N153__ppw16
+    overrides:
+      physics: {omega: 60.0}
+      grid: {nx: 153, ny: 153}
+      pml: {width: 24}
+  - run_id: omega090__N229__ppw16
+    overrides:
+      physics: {omega: 90.0}
+      grid: {nx: 229, ny: 229}
+      pml: {width: 24}
+```
+
+字段合并顺序是：
+
+```text
+configs/base.yaml
+-> batch.fixed
+-> run.overrides
+-> --epochs-override
+-> reference_prep 自动写入 supervision.reference_path
+```
+
+因此实验设计中必须避免在 `fixed` 与 `overrides` 中写相互矛盾的 key，尤其是：
+
+- `training.lambda_data`
+- `training.supervision.enabled`
+- `training.supervision.reference_path`
+- `residual.lap_tau_mode`
+
+## 2.3 现有 `B*.yaml` 与本文 `C*` 矩阵的对应关系
+
+当前仓库已有一组较早的 `B*.yaml`，可以复用，但它们不是完整高波数 campaign。建议关系如下：
+
+| 本文矩阵 | 可复用配置文件 | 当前状态 | 需要补充 |
+|---|---|---|---|
+| C0 Reference Gate | `B10_reference_only.yaml` | 可直接跑 | 增加 `omega=120/180/240` 与 ppw 网格。 |
+| C1 High-Wavenumber Scaling | `B2_frequency_sweep.yaml` | 可直接跑 | 现有 B2 固定 `N=128`，需新增 fixed-ppw 版本。 |
+| C2 PPW Resolution Law | `B3_grid_pml.yaml` | 部分可跑 | B3 是 `omega=30`，需扩展到 `omega>=90`。 |
+| C3 Phase Budget | `B3_grid_pml.yaml` + summary metrics | 部分可跑 | 需按 `omega*h^2` 与 `omega*h` 分层设计。 |
+| C4 PML Stability | `B3_grid_pml.yaml`, `B12_pml_profile.yaml` | 可直接跑 | 高频版本应加入 `omega=90/120/180`。 |
+| C5 LapTau Strictness | `B9_lap_tau_audit.yaml` | 配置文件状态偏旧 | runtime 已支持；建议下一步把 B9 从 blocked 改为 active 并写入真实 overrides。 |
+| C6 Medium Complexity | `B1_media_sweep.yaml` | 可直接跑 | 仅三类介质，后续需要更多强散射参数化介质。 |
+| C7 Source Robustness | `B7_source_pos.yaml` | 可直接跑 | 高频版需配合 `omega=90/120`。 |
+| C8 NSNO Depth | `B4_capacity.yaml` | 部分可跑 | B4 同时改 depth/modes/channels，建议拆出纯 depth sweep。 |
+| C9 FNO Mode Bandwidth | `B4_capacity.yaml` | 部分可跑 | 建议固定 depth/channels，只扫 `fno_modes`。 |
+| C10 Channel Capacity | `B4_capacity.yaml` | 部分可跑 | 建议固定 depth/modes，只扫 `nsno_channels`。 |
+| C11 Supervision / Loss | `B1_media_sweep.yaml`, `B6_hybrid_weights.yaml`, `B14_label_mismatch.yaml` | 可直接跑 | 需要显式加入 data-only。 |
+| C12 Optimization Budget | `B5_optim.yaml` | 可直接跑 | 高频版建议固定最佳容量后重扫。 |
+| C13 Curriculum / Warm Start | 无 | 需扩展 | 需要训练脚本支持跨频率 checkpoint warm-start。 |
+| C14 Phase Pathology | `B14_label_mismatch.yaml` + phase metrics | 部分可跑 | 需补 phase-loss / random-phase 初始化记录。 |
+| C15 SOTA Narrative Cards | 无单独配置 | 需手动汇总 | 以最终 winner configs 生成 benchmark card。 |
+
+注意：`B8_seed.yaml`、`B13_loss_switches.yaml`、`B15_eikonal_precision.yaml` 当前仍应保持 blocked，除非后续代码把对应字段真正接入 runtime。
+
+## 2.4 第一轮建议启动配置
+
+第一轮目标不是追求最终最优，而是快速决定高波数路线是否成立。建议先写 5 个新批次配置，或用 `--batch-filter` 从现有 B 批次里筛选同类实验。
+
+### 2.4.1 R1A: reference gate
+
+建议配置：
+
+```yaml
+entrypoint: reference_only
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  training:
+    epochs: 1
+matrix:
+  medium.velocity_model: [homogeneous, smooth_lens, layered]
+  physics.omega: [30, 60, 90, 120, 180]
+  ppw: [12, 16]
+  pml.width: [16, 24, 32]
+```
+
+实际 YAML 不能直接写笛卡尔积，需要展开成多条 `matrix` run。网格按下式生成：
+
+```text
+N = ceil(ppw * omega / (2*pi))
+```
+
+建议先排除 `N>512` 的训练 run；reference-only 可以保留到 `N≈700`。
+
+### 2.4.2 R1B: fixed-ppw high-k training
+
+主配置：
+
+```yaml
+fixed:
+  medium: {velocity_model: smooth_lens}
+  residual: {lap_tau_mode: stretched_divergence}
+  model:
+    nsno_blocks: 8
+    nsno_channels: 64
+    fno_modes: 16
+  training:
+    epochs: 5000
+    lr: 3.0e-4
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+matrix:
+  physics.omega: [60, 90, 120, 180]
+  ppw: [12, 16]
+```
+
+展开后典型 run：
+
+```yaml
+- run_id: smooth_lens__omega120__ppw16__N306__pde
+  overrides:
+    physics: {omega: 120.0}
+    grid: {nx: 306, ny: 306}
+    pml: {width: 32}
+```
+
+### 2.4.3 R1C: depth vs modes 解耦
+
+Depth sweep：
+
+```yaml
+fixed:
+  physics: {omega: 90.0}
+  grid: {nx: 229, ny: 229}   # ppw≈16
+  pml: {width: 24}
+  model:
+    nsno_channels: 64
+    fno_modes: 16
+matrix:
+  model.nsno_blocks: [2, 4, 6, 8, 12, 16]
+```
+
+Mode sweep：
+
+```yaml
+fixed:
+  physics: {omega: 90.0}
+  grid: {nx: 229, ny: 229}
+  pml: {width: 24}
+  model:
+    nsno_blocks: 8
+    nsno_channels: 64
+matrix:
+  model.fno_modes: [4, 8, 12, 16, 24, 32]
+```
+
+Channel sweep：
+
+```yaml
+fixed:
+  physics: {omega: 90.0}
+  grid: {nx: 229, ny: 229}
+  pml: {width: 24}
+  model:
+    nsno_blocks: 8
+    fno_modes: 16
+matrix:
+  model.nsno_channels: [16, 32, 64, 96, 128]
+```
+
+### 2.4.4 R1D: PDE-only / data-only / hybrid
+
+同一个物理配置必须跑三种监督方式：
+
+```yaml
+# PDE-only
+training:
+  lambda_pde: 1.0
+  lambda_data: 0.0
+  supervision:
+    enabled: false
+    reference_path: null
+    target_kind: scattering_envelope
+```
+
+```yaml
+# Data-only
+training:
+  lambda_pde: 0.0
+  lambda_data: 1.0
+  supervision:
+    enabled: true
+    reference_path: null
+    target_kind: scattering_envelope
+reference_prep:
+  enabled: true
+  label_name: matched
+```
+
+```yaml
+# Hybrid
+training:
+  lambda_pde: 1.0
+  lambda_data: 1.0
+  supervision:
+    enabled: true
+    reference_path: null
+    target_kind: scattering_envelope
+reference_prep:
+  enabled: true
+  label_name: matched
+```
+
+建议在以下场景上跑：
+
+| medium | omega | ppw | N | pml.width |
+|---|---:|---:|---:|---:|
+| `homogeneous` | 90 | 16 | 229 | 24 |
+| `smooth_lens` | 90 | 16 | 229 | 24 |
+| `smooth_lens` | 120 | 16 | 306 | 32 |
+| `layered` | 90 | 16 | 229 | 24 |
+| `layered` | 120 | 16 | 306 | 32 |
+
+### 2.4.5 R1E: strict LapTau paired audit
+
+每个 run 必须只改变 `residual.lap_tau_mode`，其余配置完全一致：
+
+```yaml
+fixed:
+  physics: {omega: 90.0}
+  grid: {nx: 229, ny: 229}
+  pml:
+    width: 24
+    power: 2
+    R0: 1.0e-6
+  model:
+    nsno_blocks: 8
+    nsno_channels: 64
+    fno_modes: 16
+  training:
+    epochs: 5000
+    lr: 3.0e-4
+matrix:
+  - run_id: smooth_lens__strict
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      residual: {lap_tau_mode: stretched_divergence}
+  - run_id: smooth_lens__legacy
+    overrides:
+      medium: {velocity_model: smooth_lens}
+      residual: {lap_tau_mode: mixed_legacy}
+```
+
+这组实验应作为 C5 的高优先级验证，因为它直接对应 PML 算子不可交换性的理论证明。
+
 ## 3. 核心无量纲控制量
 
 高波数实验应围绕无量纲量组织，而不是只扫原始参数。
@@ -857,4 +1385,3 @@ Total: about 282-318 runs
 ```
 
 这对 A6000 连续运行是合理的，并且结果足够决定第二轮大矩阵怎么收缩。
-
