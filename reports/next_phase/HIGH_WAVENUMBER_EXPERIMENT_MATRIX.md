@@ -288,6 +288,15 @@ python scripts/run_matrix.py \
 configs/experiments/B*.yaml
 ```
 
+因此本文中的 `C0-C21` 是研究设计编号，不等于当前文件名匹配规则。若不改代码，新增配置文件应采用 `B16_*.yaml`、`B17_*.yaml` 这类 `B` 前缀文件名，并在文件内部保留：
+
+```yaml
+batch_id: C16
+name: neural_pml_damping_window
+```
+
+若希望文件名也使用 `C*.yaml`，需要先把 `scripts/run_matrix.py` 中的 discovery 规则从只匹配 `B*.yaml` 扩展为同时匹配 `B*.yaml` 和 `C*.yaml`。
+
 每个实验批次文件的结构应保持如下：
 
 ```yaml
@@ -372,12 +381,18 @@ configs/base.yaml
 | C13 Curriculum / Warm Start | 无 | 需扩展 | 需要训练脚本支持跨频率 checkpoint warm-start。 |
 | C14 Phase Pathology | `B14_label_mismatch.yaml` + phase metrics | 部分可跑 | 需补 phase-loss / random-phase 初始化记录。 |
 | C15 SOTA Narrative Cards | 无单独配置 | 需手动汇总 | 以最终 winner configs 生成 benchmark card。 |
+| C16 Neural-PML Damping Window | `B12_pml_profile.yaml`, `B3_grid_pml.yaml` | 可直接跑 | 需把 `R0/power/width` 解释为 `sigma_max` 代理。 |
+| C17 PML Interface Consistency | `B12_pml_profile.yaml`, `B9_lap_tau_audit.yaml` | 部分可跑 | 需新增 interface-band metrics 才能做强结论。 |
+| C18 Auxiliary-Field PML Audit | `B9_lap_tau_audit.yaml` | 配置文件状态偏旧 | runtime 已支持 strict/legacy；需修正 B9 blocked 状态。 |
+| C19 PML Loss Weighting | 无 | 需扩展 | 需要 `lambda_physical/lambda_pml` 或 PML sampling fraction。 |
+| C20 PML Antidote Architectures | 无 | 需扩展 | QNN、LS-GD、pretrain 需要新增模型/优化入口。 |
+| C21 PML-Free Radiation Baselines | 无 | 需扩展 | GI loss 或 enlarged-domain reference 需要新增求解路径。 |
 
 注意：`B8_seed.yaml`、`B13_loss_switches.yaml`、`B15_eikonal_precision.yaml` 当前仍应保持 blocked，除非后续代码把对应字段真正接入 runtime。
 
 ## 2.4 第一轮建议启动配置
 
-第一轮目标不是追求最终最优，而是快速决定高波数路线是否成立。建议先写 5 个新批次配置，或用 `--batch-filter` 从现有 B 批次里筛选同类实验。
+第一轮目标不是追求最终最优，而是快速决定高波数路线是否成立。建议先写 5 个新批次配置；若不修改 `run_matrix.py`，这些文件名仍用 `B` 前缀，例如 `B16_highk_reference_gate.yaml`，文件内部的 `batch_id` 再写 `C0` 或 `C16`。也可以先用 `--batch-filter` 从现有 B 批次里筛选同类实验。
 
 ### 2.4.1 R1A: reference gate
 
@@ -636,7 +651,7 @@ scattering_strength_proxy ~ omega * diam(domain) * ||s^2 - s0^2|| / s0
 
 ## 4. 实验矩阵总览
 
-建议把完整 campaign 分为 16 组。
+建议把完整 campaign 分为 22 组。
 
 | 组别 | 名称 | 核心问题 | 是否当前可直接跑 |
 |---|---|---|---|
@@ -656,6 +671,12 @@ scattering_strength_proxy ~ omega * diam(domain) * ||s^2 - s0^2|| / s0
 | C13 | Curriculum / Warm Start | 频率 curriculum 是否改善高频训练 | 需扩展 |
 | C14 | Phase Pathology | phase loss / pi/2 随机相位是否出现 | 是 |
 | C15 | SOTA Narrative Cards | 与文献 benchmark 对齐 | 部分可跑 |
+| C16 | Neural-PML Damping Window | PML 阻尼窗口是否存在梯度饥饿/驻波污染两端崩溃 | 是 |
+| C17 | PML Interface Consistency | 物理域/PML 交界一致性误差是否诱发伪反射 | 部分可跑 |
+| C18 | Auxiliary-Field PML Audit | `tau`/envelope 辅助场的 PML 处理是否自洽 | 是 |
+| C19 | PML Loss Weighting | PML 配点/权重是否造成混合残差病态 | 需扩展 |
+| C20 | PML Antidote Architectures | QNN / LS-GD / warm pretrain 是否缓解 PML 训练陷阱 | 需扩展 |
+| C21 | PML-Free Radiation Baselines | Green-Integral / enlarged-domain / no-PML baseline | 需扩展 |
 
 ## 5. C0: Sanity / Reference Gate
 
@@ -1224,7 +1245,379 @@ PML profile：
 7 cards * 5-6 variants = 35-42 runs
 ```
 
-## 21. 三轮执行计划
+## 21. C16: Neural-PML Damping Window
+
+### 目的
+
+专门验证神经网络训练中 PML 的核心调参困境：阻尼过强时是否出现梯度饥饿，阻尼过弱时是否出现边界反射和伪驻波污染。
+
+传统 PML 常通过目标反射率 `R0`、PML 厚度 `L_pml` 和剖面幂次 `power` 间接确定最大阻尼。当前代码没有单独暴露 `sigma_max`，因此本矩阵把以下配置作为 `sigma_max` 的可运行代理：
+
+```yaml
+pml:
+  width: <L_pml in grid cells>
+  power: <profile exponent>
+  R0: <target reflection coefficient>
+```
+
+解释规则：
+
+| 方向 | 配置变化 | 等效含义 |
+|---|---|---|
+| 更小 `R0` | `1e-4 -> 1e-6 -> 1e-8 -> 1e-10` | 更强最大阻尼 |
+| 更大 `width` | `8 -> 16 -> 24 -> 32 -> 48` | 更厚吸收距离，单点梯度更平缓 |
+| 更大 `power` | `1 -> 2 -> 3 -> 4` | interface 附近更平缓，深层更陡 |
+
+### 当前可跑矩阵
+
+| 轴 | 值 |
+|---|---|
+| `physics.omega` | 60, 120, 180 |
+| `medium.velocity_model` | `smooth_lens`, `layered` |
+| `grid.nx = grid.ny` | fixed ppw=16 |
+| `pml.width` | 8, 16, 24, 32 |
+| `pml.power` | 1, 2, 3 |
+| `pml.R0` | `1e-4`, `1e-6`, `1e-8`, `1e-10` |
+| `residual.lap_tau_mode` | `stretched_divergence` |
+| `model` | best-so-far |
+
+全笛卡尔积规模过大：
+
+```text
+3 omega * 2 media * 4 width * 3 power * 4 R0 = 288 runs
+```
+
+建议使用分层子矩阵：
+
+| 子矩阵 | 固定项 | 扫描项 | runs |
+|---|---|---|---:|
+| C16A width window | `power=2`, `R0=1e-6` | `width=[8,16,24,32,48]` | 30 |
+| C16B damping window | `width=24`, `power=2` | `R0=[1e-3,1e-4,1e-6,1e-8,1e-10]` | 30 |
+| C16C profile smoothness | `width=24`, `R0=1e-6` | `power=[1,2,3,4]` | 24 |
+| C16D corner stress | best/worst from A-C | `omega=[180,240,300]`, `layered` | 6-12 |
+
+### 关键判据
+
+阻尼过强的信号：
+
+- PML 区域 residual 很低，但物理域误差不降。
+- loss 前期快速下降后停滞。
+- `rel_l2_to_reference` 高，而 boundary/PML residual 看似很好。
+- phase MAE 接近随机或出现局部常相位塌缩。
+
+阻尼过弱的信号：
+
+- 物理域 residual 和 reference error 同时恶化。
+- PML 外边缘附近出现高幅值驻波。
+- 增大 `width` 后误差明显下降，说明原设置吸收不足。
+
+### 需要增强的指标
+
+当前 summary 指标不足以完全区分“梯度饥饿”和“驻波污染”。建议后续加入：
+
+```text
+pml_energy_mean
+pml_energy_outer_band
+pml_energy_inner_band
+physical_energy_mean
+pml_to_physical_energy_ratio
+interface_residual_rmse
+outer_boundary_residual_rmse
+loss_tail_slope
+```
+
+在没有这些指标前，C16 仍可跑，但结论应主要依赖 paired comparison 和可视化波场。
+
+## 22. C17: PML Interface Consistency Matrix
+
+### 目的
+
+验证物理域 `Omega0` 与 PML 域 `OmegaPML` 交界处是否存在由混合 PDE 残差引发的一致性误差。该矩阵对应“自动微分全域平滑输出”与“PML 系数局部突变/高阶导数不连续”的冲突。
+
+### 当前可跑代理矩阵
+
+现有代码未单独输出 interface-band residual，但可以用 `pml.power`、`pml.width`、`lap_tau_mode` 做代理：
+
+| 轴 | 值 |
+|---|---|
+| `physics.omega` | 90, 120, 180 |
+| `medium.velocity_model` | `smooth_lens`, `layered` |
+| `ppw` | 16 |
+| `pml.width` | 16, 24, 32 |
+| `pml.power` | 1, 2, 3, 4 |
+| `residual.lap_tau_mode` | `stretched_divergence`, `mixed_legacy` |
+
+规模：
+
+```text
+3 omega * 2 media * 3 width * 4 power * 2 modes = 144 runs
+```
+
+建议先跑精简版：
+
+```text
+omega=[120,180]
+medium=[smooth_lens,layered]
+width=[16,24,32]
+power=[1,2,3]
+lap_tau_mode=[stretched_divergence,mixed_legacy]
+Total = 72 runs
+```
+
+### 预期现象
+
+| 现象 | 解释 |
+|---|---|
+| `power=1` 边界误差高 | interface 附近阻尼斜率过强，网络难以平滑过渡。 |
+| `power=3/4` PML 深层误差高 | interface 平缓但深层衰减陡峭，可能产生梯度饥饿。 |
+| strict 优于 legacy | 支持拉伸算子必须一致作用于 envelope residual。 |
+| legacy 只在低频看似可用 | 与 A1/A3 中 `O(1)` 残差污染相符。 |
+
+### 后续必须补的评估指标
+
+建议在 `evaluate_run.py` 或 summary 中按空间 mask 分解 residual：
+
+```text
+residual_rmse_physical
+residual_rmse_pml
+residual_rmse_interface_1h
+residual_rmse_interface_2h
+residual_rmse_interface_4h
+wavefield_error_interface_band
+phase_error_interface_band
+```
+
+有了这些指标，C17 才能从“经验 PML sweep”升级为“混合残差一致性误差”的严格证据。
+
+## 23. C18: Auxiliary-Field PML Audit
+
+### 目的
+
+防止把 PML 复坐标拉伸错误地解释为“独立求解复数旅行时 `tau`”。当前项目的安全立场应写清楚：
+
+- `tau_fsm` 是实空间 FSM 走时，保持纯实数。
+- 不在 PML 内独立训练或监督复数 `tau`。
+- 在 envelope residual 装配中，凡是算子进入 PML 域，`tau` 相关项必须使用与 `A` 一致的复拉伸修正。
+- `mixed_legacy` 只作为审计/反例，不作为最终方法。
+
+### 当前可跑矩阵
+
+| 轴 | 值 |
+|---|---|
+| `residual.lap_tau_mode` | `stretched_divergence`, `mixed_legacy` |
+| `physics.omega` | 60, 120, 180, 240 |
+| `medium.velocity_model` | `homogeneous`, `smooth_lens`, `layered` |
+| `ppw` | 12, 16 |
+| `pml.width` | 16, 24 |
+
+规模：
+
+```text
+2 modes * 4 omega * 3 media * 2 ppw * 2 width = 96 runs
+```
+
+### 不应实现为有效实验轴的错误方案
+
+以下方案可以写在论文的“pitfall”讨论中，但不应作为当前主方法：
+
+| 错误/风险方案 | 状态 | 原因 |
+|---|---|---|
+| `complex_tau_network` | blocked | 需要选择复 Eikonal 多值分支，PINN 无迎风因果机制。 |
+| `pml_eikonal_loss` | blocked | 实数 `tau` 无法满足 PML 复系数 Eikonal 方程。 |
+| `tau_imag_supervision` | blocked | 当前 reference pipeline 没有物理可信的 `Im(tau)` 标签。 |
+| `lap_tau_real_only_in_pml` | legacy audit only | 等价于 `mixed_legacy`，会注入 PML 源项误差。 |
+
+### 判读
+
+若 `mixed_legacy` 在低频/弱 PML 下与 strict 差距小，不代表理论正确，只说明误差被低频和弱阻尼掩盖。真正的判据应放在：
+
+- `omega >= 120`
+- `layered` 或未来 sharp-interface 介质
+- `pml.R0 <= 1e-6`
+- `pml.width <= 24`
+
+这些条件下 strict 应该更稳，legacy 应出现 PML 反射或 residual 偏置。
+
+## 24. C19: PML Loss Weighting / Collocation Balance
+
+### 目的
+
+验证混合损失
+
+```text
+lambda_phy * ||N0[u]||^2_Omega0 + lambda_pml * ||NPML[u]||^2_OmegaPML
+```
+
+中 `lambda_pml` 与 PML 配点比例是否把训练推向虚假局部极小值。该矩阵直接对应 PML 区域“低残差但低梯度”的陷阱，以及局部 PDE residual 与全局辐射一致性的失衡。
+
+### 当前状态
+
+当前训练配置只有：
+
+```yaml
+training:
+  lambda_pde: ...
+  lambda_data: ...
+```
+
+没有单独的：
+
+```yaml
+training.lambda_physical
+training.lambda_pml
+sampling.pml_fraction
+sampling.interface_oversample
+```
+
+因此 C19 是需要扩展的矩阵。
+
+### 建议新增配置
+
+```yaml
+training:
+  lambda_physical: 1.0
+  lambda_pml: 1.0
+  lambda_interface: 1.0
+sampling:
+  pml_fraction: 0.25
+  interface_oversample: 1.0
+  interface_band_h: 4
+```
+
+### 扩展后矩阵
+
+| 轴 | 值 |
+|---|---|
+| `lambda_pml / lambda_physical` | 0.01, 0.1, 1, 10, 100 |
+| `sampling.pml_fraction` | 0.05, 0.15, 0.25, 0.40 |
+| `interface_oversample` | 1, 2, 4 |
+| `physics.omega` | 120, 180 |
+| `medium.velocity_model` | `smooth_lens`, `layered` |
+
+建议不要全量笛卡尔积，先跑 5 个权重比和 4 个采样比例的二维切片：
+
+```text
+5 lambda ratios * 4 pml fractions * 2 omega * 2 media = 80 runs
+```
+
+### 预期
+
+- `lambda_pml` 太大：PML residual 下降，物理域 rel_l2 可能恶化。
+- `lambda_pml` 太小：外边界反射污染物理域。
+- `pml_fraction` 太高：训练预算被 PML 死区吞掉。
+- `interface_oversample` 适中：可能降低伪反射，但太高会过拟合交界层。
+
+## 25. C20: PML Antidote Architectures
+
+### 目的
+
+把文献中的 PML 训练解法转成可验证的架构/优化矩阵。官方 arXiv 页面核对到三条与本文相关的方向：
+
+| 方向 | 参考 | 与 PML 陷阱的关系 |
+|---|---|---|
+| Quadratic Neural Network + PML | [arXiv:2208.08276](https://arxiv.org/abs/2208.08276) | 用二次神经元增强非光滑介质与 PML 衰减拟合能力。 |
+| Least-Squares-Embedded Optimization | [arXiv:2504.16553](https://arxiv.org/abs/2504.16553) | 在 GD 中嵌入 LS 更新，缓解高频 Helmholtz/PML 训练不稳定。 |
+| Green-Integral neural solver | [arXiv:2604.21411](https://arxiv.org/abs/2604.21411) | 用积分辐射约束替代局部 PDE+PML 残差。 |
+
+### 当前状态
+
+当前 NSNO 代码不包含 QNN、LS-GD 或 GI solver。因此 C20 是设计矩阵，不是立即可跑矩阵。
+
+### 建议架构矩阵
+
+| variant | 需要新增内容 | 目的 |
+|---|---|---|
+| NSNO base | 已有 | 当前主方法 baseline。 |
+| NSNO deep | 已有 | 验证 Neumann 深度。 |
+| NSNO + quadratic pointwise MLP | 需改 `models` | 模拟 QNN 对局部曲率/非光滑 PML 的增强。 |
+| NSNO + LS output head | 需改 trainer | 对最后线性层做 least-squares embedded update。 |
+| NSNO + frequency pretrain | 需 warm-start | 对齐 QNN 文献中的迁移预训练。 |
+| PINN-PML baseline | 需新增 | 与标准 PINN+PML 比较。 |
+
+### 扩展后矩阵
+
+| 轴 | 值 |
+|---|---|
+| `architecture` | base NSNO, deep NSNO, quadratic-pointwise NSNO, LS-head NSNO |
+| `physics.omega` | 90, 120, 180 |
+| `medium.velocity_model` | `smooth_lens`, `layered`, future sharp-interface |
+| `pml.R0` | `1e-4`, `1e-6`, `1e-8` |
+| `pml.width` | 16, 24 |
+
+精简规模：
+
+```text
+4 arch * 3 omega * 2 media * 3 R0 = 72 runs
+```
+
+### 判读
+
+- QNN/二次 pointwise 层若主要改善 `layered` 和 sharp-interface，而对 smooth_lens 收益小，说明它解决的是非光滑系数/PML 曲率问题。
+- LS-head 若在高 `omega` 和强阻尼下显著降低 loss tail，说明优化病态是主瓶颈。
+- warm pretrain 若降低 phase error，而不明显降低 residual，说明主要改善 phase lock。
+
+## 26. C21: PML-Free Radiation Baselines
+
+### 目的
+
+验证“摒弃 PML”是否是更稳的高波数路线。该矩阵不要求立即实现 GI solver，但应作为最终 benchmark 叙事的预留对照。
+
+### 可分三层执行
+
+| 层级 | 方法 | 当前是否可做 | 作用 |
+|---|---|---|---|
+| L0 | enlarged-domain reference | 部分可做 | 用更大物理域/更厚 PML 近似无反射 reference。 |
+| L1 | no-PML hard boundary failure | 需谨慎 | 作为反例，展示刚性截断导致驻波污染。 |
+| L2 | Green-Integral loss | 需新增 | 与 GI 文献对齐，真正移除 PML。 |
+
+### L0: enlarged-domain proxy
+
+在不实现 GI 的情况下，可以先用更厚 PML 和更大裁剪域做近似：
+
+| 轴 | 值 |
+|---|---|
+| `domain scale` | 1.0, 1.5, 2.0 |
+| `pml.width` | 24, 48, 64 |
+| `physics.omega` | 90, 120, 180 |
+| `medium.velocity_model` | `smooth_lens`, `layered` |
+
+注意：当前代码默认单位域，`grid.domain` 改动可能影响现有假设。若不改 domain，可先用 `pml.width=48/64` 做厚 PML reference proxy。
+
+### L2: GI solver 目标矩阵
+
+未来实现 Green-Integral loss 后，核心矩阵应为：
+
+| 轴 | 值 |
+|---|---|
+| radiation treatment | strict PML PDE, GI-only, hybrid GI+PDE |
+| `physics.omega` | 90, 120, 180, 240 |
+| `medium.velocity_model` | `smooth_lens`, `layered`, future Marmousi-like |
+| local PDE collocation fraction | 0, 0.01, 0.05, 0.10 |
+| model | base, deep |
+
+规模：
+
+```text
+3 radiation methods * 4 omega * 3 media * 4 PDE fractions * 2 models = 288 runs
+```
+
+精简版先跑：
+
+```text
+radiation=[strict PML, GI-only, hybrid GI+PDE]
+omega=[120,180]
+medium=[smooth_lens,layered]
+model=[deep]
+Total = 12 runs
+```
+
+### 判读
+
+- GI-only 若 residual 不可直接对比，应以 reference rel_l2、phase MAE、runtime、memory 为主。
+- hybrid GI+PDE 若优于 GI-only，说明局部强散射区域仍需要少量 PDE 正则。
+- strict PML 若在 smooth_lens 接近 GI，但在 layered/sharp-interface 明显差，说明 PML/interface 一致性误差是复杂介质瓶颈。
+
+## 27. 三轮执行计划
 
 ### Round 1: Diagnostic Wide Sweep
 
@@ -1236,12 +1629,14 @@ PML profile：
 - C1 子集
 - C2
 - C5
+- C16
+- C18
 - C8/C9 小规模
 
 预计：
 
 ```text
-250-350 runs
+320-450 runs
 ```
 
 ### Round 2: High-Wavenumber Main Sweep
@@ -1254,13 +1649,15 @@ PML profile：
 - C3
 - C4
 - C6
+- C16 完整
+- C17
 - C11
 - C12
 
 预计：
 
 ```text
-400-600 runs
+550-800 runs
 ```
 
 ### Round 3: Paper Benchmark / Long Runs
@@ -1272,15 +1669,18 @@ PML profile：
 - C13
 - C14
 - C15
+- C19
+- C20
+- C21
 - long-run finalists
 
 预计：
 
 ```text
-80-150 runs
+120-220 runs
 ```
 
-## 22. 服务器运行建议
+## 28. 服务器运行建议
 
 RTX A6000 可长期跑，但应分层调度：
 
@@ -1294,8 +1694,11 @@ RTX A6000 可长期跑，但应分层调度：
 ```text
 outputs/highk_round1_reference_gate
 outputs/highk_round1_wide
+outputs/highk_round1_pml_diagnostics
 outputs/highk_round2_main
+outputs/highk_round2_pml_interface
 outputs/highk_round3_finalists
+outputs/highk_round3_radiation_baselines
 ```
 
 每轮都应运行：
@@ -1312,7 +1715,7 @@ python scripts/summarize_matrix.py --output-root <output-root>
 python scripts/run_matrix.py --output-root <output-root> --device cuda:0 --epochs-override 5000 --continue-on-error
 ```
 
-## 23. 最终报告图表清单
+## 29. 最终报告图表清单
 
 必须产出的核心图：
 
@@ -1331,8 +1734,15 @@ python scripts/run_matrix.py --output-root <output-root> --device cuda:0 --epoch
 13. curriculum vs direct training loss curve
 14. runtime vs accuracy Pareto
 15. SOTA benchmark card summary table
+16. `pml.R0` vs physical-domain error
+17. `pml.width` vs PML/boundary energy ratio
+18. `pml.power` vs interface-band residual
+19. strict vs legacy under matched `R0/width/power`
+20. PML over-damping vs under-damping phase portraits
+21. `lambda_pml/lambda_physical` vs error, once C19 is implemented
+22. QNN/LS/GI antidote comparison, once C20/C21 are implemented
 
-## 24. 最终判断标准
+## 30. 最终判断标准
 
 ### 成功标准
 
@@ -1344,6 +1754,9 @@ python scripts/run_matrix.py --output-root <output-root> --device cuda:0 --epoch
 4. `rel_l2_to_reference` 与相位误差预算存在可解释关系。
 5. high-frequency finalist 能在至少一个 `omega>=180` 场景达到稳定、可复现误差。
 6. phase MAE 不应长期停在 `pi/2`。
+7. PML 参数存在可解释稳定窗口，而不是任意 `R0/width/power` 都可用。
+8. PML interface 误差不会成为最终 high-k 结果的主导瓶颈。
+9. 对 `tau` 的处理必须保持“实 FSM + strict envelope residual correction”，不得引入不受控复 Eikonal 分支。
 
 ### 失败也有价值的判据
 
@@ -1354,8 +1767,11 @@ python scripts/run_matrix.py --output-root <output-root> --device cuda:0 --epoch
 - 增加 `fno_modes` 无效但增加 depth 有效：Neumann 散射阶数主导。
 - hybrid 比 PDE-only 差：label phase noise 或 reference mismatch 主导。
 - curriculum 明显优于 direct：与文献 spectral bias/curriculum 叙事一致。
+- PML 强阻尼下 residual 降低但 reference error 不降：梯度饥饿或虚假极小值。
+- PML 弱阻尼下误差随 `width` 增大明显改善：边界驻波污染。
+- strict PML 和 GI/no-PML baseline 差距大：人工吸收层而非网络主体是主瓶颈。
 
-## 25. 推荐优先启动矩阵
+## 31. 推荐优先启动矩阵
 
 如果现在立刻上服务器，建议第一批不是全量，而是：
 
@@ -1364,14 +1780,18 @@ python scripts/run_matrix.py --output-root <output-root> --device cuda:0 --epoch
 3. C2: PPW Resolution Law
 4. C8: NSNO Depth Sweep
 5. C11: Supervision / Loss Matrix
+6. C16: Neural-PML Damping Window 子集
+7. C18: Auxiliary-Field PML Audit 子集
 
-这五组最能快速回答：
+这七组最能快速回答：
 
 - 高频是否可解。
 - 多少 ppw 足够。
 - 深度是否是瓶颈。
 - hybrid 是否帮助 phase lock。
 - 目前 1e-3 误差是否接近理论底噪。
+- PML 参数是否存在稳定窗口。
+- strict `tau`/PML 装配是否相对 legacy 更稳。
 
 建议第一批规模：
 
@@ -1381,7 +1801,9 @@ C1 subset: 48
 C2: 36-72
 C8: 48
 C11: 42
-Total: about 282-318 runs
+C16 subset: 60-84
+C18 subset: 36-48
+Total: about 378-450 runs
 ```
 
 这对 A6000 连续运行是合理的，并且结果足够决定第二轮大矩阵怎么收缩。
