@@ -3,6 +3,7 @@
 ==============
 """
 
+import csv
 import yaml
 
 from pathlib import Path
@@ -27,6 +28,10 @@ def test_run_training_saves_artifacts(tmp_path):
     assert summary["device"] == "cpu"
     assert summary["epochs"] == 1
     assert summary["velocity_model"] == "smooth_lens"
+    expected_h = 1.0 / 32.0
+    assert abs(summary["phase_tau_error_budget_h2"] - 10.0 * expected_h ** 2) < 1.0e-12
+    assert abs(summary["phase_tau_error_budget_h"] - 10.0 * expected_h) < 1.0e-12
+    assert summary["phase_tau_error_budget_h"] > summary["phase_tau_error_budget_h2"]
     assert output_dir.exists()
     assert (output_dir / "config_merged.yaml").exists()
     assert (output_dir / "summary.json").exists()
@@ -54,6 +59,12 @@ def test_run_training_saves_artifacts(tmp_path):
     assert merged["training"]["epochs"] == 1
     assert merged["medium"]["velocity_model"] == "smooth_lens"
 
+    with open(output_dir / "metrics_summary.csv", "r", encoding="utf-8") as f:
+        metrics_row = next(csv.DictReader(f))
+    assert float(metrics_row["phase_tau_error_budget_h2"]) == summary["phase_tau_error_budget_h2"]
+    assert float(metrics_row["wavefield_phase_error_budget_p95_h"]) >= 0.0
+
     refreshed = evaluate_saved_run(output_dir, device="cpu")
     assert refreshed["output_dir"] == str(output_dir)
     assert refreshed["residual_max_evaluation"] >= 0.0
+    assert refreshed["phase_tau_error_budget_h"] == summary["phase_tau_error_budget_h"]

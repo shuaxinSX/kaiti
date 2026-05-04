@@ -175,6 +175,8 @@ def compute_model_diagnostics(trainer):
         "physical_slice": (physical_y, physical_x),
         "physical_mask": physical_mask,
         "evaluation_mask": evaluation_mask,
+        "omega": float(trainer.omega),
+        "grid_h": float(trainer.grid.h),
     }
 
 
@@ -188,6 +190,25 @@ def save_matrix_csv(matrix, output_path):
     np.savetxt(output_path, np.asarray(matrix, dtype=np.float64), delimiter=",", fmt="%.16e")
 
 
+def estimate_phase_reconstruction_budget(omega, h, scattering_mean, scattering_p95):
+    """Estimate first-order wavefield reconstruction sensitivity to tau errors.
+
+    The A3 bound is |du| <= |du0| + |dA| + omega * |A| * |dtau|.
+    We report two tau-error scales: O(h^2) for smooth media and O(h) for
+    kink/order-loss regions.
+    """
+    phase_h2 = float(omega * h ** 2)
+    phase_h = float(omega * h)
+    return {
+        "phase_tau_error_budget_h2": phase_h2,
+        "phase_tau_error_budget_h": phase_h,
+        "wavefield_phase_error_budget_mean_h2": float(phase_h2 * scattering_mean),
+        "wavefield_phase_error_budget_p95_h2": float(phase_h2 * scattering_p95),
+        "wavefield_phase_error_budget_mean_h": float(phase_h * scattering_mean),
+        "wavefield_phase_error_budget_p95_h": float(phase_h * scattering_p95),
+    }
+
+
 def compute_metric_bundle(losses, diagnostics):
     """Assemble scalar metrics that summarize convergence and final field quality."""
     losses_array = np.asarray(losses, dtype=np.float64)
@@ -196,6 +217,8 @@ def compute_metric_bundle(losses, diagnostics):
     physical_values = diagnostics["residual_mag"][diagnostics["physical_mask"]]
     wavefield_values = diagnostics["wavefield_mag"][diagnostics["physical_mask"]]
     scattering_values = diagnostics["a_scat_mag"][diagnostics["physical_mask"]]
+    scattering_mean = float(np.mean(scattering_values))
+    scattering_p95 = float(np.quantile(scattering_values, 0.95))
 
     initial_loss = float(losses_array[0])
     final_loss = float(losses_array[-1])
@@ -216,10 +239,18 @@ def compute_metric_bundle(losses, diagnostics):
         "wavefield_mag_mean_physical": float(np.mean(wavefield_values)),
         "wavefield_mag_p95_physical": float(np.quantile(wavefield_values, 0.95)),
         "wavefield_mag_max_physical": float(np.max(wavefield_values)),
-        "scattering_mag_mean_physical": float(np.mean(scattering_values)),
-        "scattering_mag_p95_physical": float(np.quantile(scattering_values, 0.95)),
+        "scattering_mag_mean_physical": scattering_mean,
+        "scattering_mag_p95_physical": scattering_p95,
         "scattering_mag_max_physical": float(np.max(scattering_values)),
     }
+    metrics.update(
+        estimate_phase_reconstruction_budget(
+            diagnostics["omega"],
+            diagnostics["grid_h"],
+            scattering_mean,
+            scattering_p95,
+        )
+    )
     return metrics
 
 
