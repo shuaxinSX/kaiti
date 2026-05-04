@@ -21,6 +21,7 @@ Current A6 rules:
 - Reference-label caches are keyed by a stable hash of the fully materialized reference config so changed label-generation overrides do not silently reuse stale outputs.
 - Hybrid data supervision must consume the offline phase-stripped `reference_envelope.npy` artifact with `training.supervision.target_kind=scattering_envelope`; full-wavefield artifacts are not valid training labels.
 - Run summaries now include A3 reconstruction sensitivity budgets: `phase_tau_error_budget_h2` for smooth O(h^2) travel-time error and `phase_tau_error_budget_h` for order-loss O(h) regions, plus wavefield-scaled budget estimates.
+- Run summaries also include A4 capacity diagnostics: `full_wave_nyquist_mode_floor`, `fno_mode_to_full_wave_nyquist`, `scattering_strength_proxy`, `neumann_proxy_convergent`, and `neumann_depth_tail_proxy`.
 
 Runtime support status after the strict PML residual wiring:
 - `residual.lap_tau_mode`: now read from config by `Trainer`; default is `stretched_divergence`, with `mixed_legacy` retained for explicit audit runs.

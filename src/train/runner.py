@@ -9,6 +9,7 @@ import argparse
 import csv
 import json
 import logging
+import math
 import time
 from datetime import datetime
 from pathlib import Path
@@ -26,6 +27,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
+_NUMERIC_EPS = 1.0e-12
 
 
 def configure_logging(level="INFO"):
@@ -159,6 +161,8 @@ def compute_model_diagnostics(trainer):
     physical_y, physical_x = trainer.grid.physical_slice()
     physical_mask = ~trainer.grid.pml_mask()
     evaluation_mask = physical_mask & trainer.loss_mask.astype(bool)
+    slowness_physical = trainer.medium.slowness[physical_y, physical_x]
+    slowness_sq_contrast = float(np.max(np.abs(slowness_physical ** 2 - trainer.medium.s0 ** 2)))
 
     return {
         "a_scat": a_scat,
@@ -177,6 +181,16 @@ def compute_model_diagnostics(trainer):
         "evaluation_mask": evaluation_mask,
         "omega": float(trainer.omega),
         "grid_h": float(trainer.grid.h),
+        "s0": float(trainer.medium.s0),
+        "domain_diameter": float(
+            math.hypot(
+                trainer.grid.x_max - trainer.grid.x_min,
+                trainer.grid.y_max - trainer.grid.y_min,
+            )
+        ),
+        "slowness_sq_contrast": slowness_sq_contrast,
+        "nsno_blocks": int(trainer.cfg.model.nsno_blocks),
+        "fno_modes": int(trainer.cfg.model.fno_modes),
     }
 
 
@@ -206,6 +220,35 @@ def estimate_phase_reconstruction_budget(omega, h, scattering_mean, scattering_p
         "wavefield_phase_error_budget_p95_h2": float(phase_h2 * scattering_p95),
         "wavefield_phase_error_budget_mean_h": float(phase_h * scattering_mean),
         "wavefield_phase_error_budget_p95_h": float(phase_h * scattering_p95),
+    }
+
+
+def estimate_neumann_capacity_budget(
+    omega,
+    s0,
+    domain_diameter,
+    slowness_sq_contrast,
+    nsno_blocks,
+    fno_modes,
+):
+    """Estimate A4 spectral and Neumann-series capacity diagnostics."""
+    carrier_mode_floor = float(omega * s0 * domain_diameter / (2.0 * math.pi))
+    mode_ratio = float(fno_modes / max(carrier_mode_floor, _NUMERIC_EPS))
+    scattering_strength = float(
+        omega * domain_diameter * slowness_sq_contrast / max(abs(s0), _NUMERIC_EPS)
+    )
+    neumann_convergent = bool(scattering_strength < 1.0)
+    tail_proxy = (
+        float(scattering_strength ** (int(nsno_blocks) + 1))
+        if neumann_convergent
+        else None
+    )
+    return {
+        "full_wave_nyquist_mode_floor": carrier_mode_floor,
+        "fno_mode_to_full_wave_nyquist": mode_ratio,
+        "scattering_strength_proxy": scattering_strength,
+        "neumann_proxy_convergent": neumann_convergent,
+        "neumann_depth_tail_proxy": tail_proxy,
     }
 
 
@@ -249,6 +292,16 @@ def compute_metric_bundle(losses, diagnostics):
             diagnostics["grid_h"],
             scattering_mean,
             scattering_p95,
+        )
+    )
+    metrics.update(
+        estimate_neumann_capacity_budget(
+            diagnostics["omega"],
+            diagnostics["s0"],
+            diagnostics["domain_diameter"],
+            diagnostics["slowness_sq_contrast"],
+            diagnostics["nsno_blocks"],
+            diagnostics["fno_modes"],
         )
     )
     return metrics
