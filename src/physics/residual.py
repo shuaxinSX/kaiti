@@ -17,6 +17,8 @@ PDE 残差计算器
 
 import torch
 
+from src.core.region_masks import build_region_masks
+
 
 class ResidualComputer:
     """PDE 残差完整计算流水线。
@@ -34,6 +36,12 @@ class ResidualComputer:
         omega,
         diff_ops,
         lap_tau_mode="stretched_divergence",
+        lambda_physical=None,
+        lambda_pml=None,
+        lambda_interface=None,
+        pml_fraction=None,
+        interface_oversample=None,
+        interface_band_h=4,
     ):
         """
         Args:
@@ -75,6 +83,32 @@ class ResidualComputer:
 
         # 掩码
         self.loss_mask = torch.from_numpy(loss_mask).float()
+        region_masks = build_region_masks(
+            grid,
+            loss_mask=loss_mask,
+            interface_band_h=interface_band_h,
+            pml_band_h=interface_band_h,
+        )
+        self.physical_active_mask = torch.from_numpy(region_masks["physical_active_mask"])
+        self.pml_active_mask = torch.from_numpy(region_masks["pml_active_mask"])
+        self.interface_active_mask = torch.from_numpy(region_masks["interface_custom_active"])
+        self.physical_bulk_active_mask = torch.from_numpy(region_masks["physical_bulk_active"])
+        self.pml_bulk_active_mask = torch.from_numpy(region_masks["pml_bulk_active"])
+        self.region_weighting_enabled = any(
+            value is not None
+            for value in (
+                lambda_physical,
+                lambda_pml,
+                lambda_interface,
+                pml_fraction,
+                interface_oversample,
+            )
+        )
+        self.lambda_physical = 1.0 if lambda_physical is None else float(lambda_physical)
+        self.lambda_pml = 1.0 if lambda_pml is None else float(lambda_pml)
+        self.lambda_interface = 1.0 if lambda_interface is None else float(lambda_interface)
+        self.pml_fraction = None if pml_fraction is None else float(pml_fraction)
+        self.interface_oversample = 1.0 if interface_oversample is None else float(interface_oversample)
         self.device = torch.device("cpu")
 
     def _validate_lap_tau_mode(self, lap_tau_mode):
@@ -110,11 +144,22 @@ class ResidualComputer:
             "lap_tau_c",
             "rhs_c",
             "loss_mask",
+            "physical_active_mask",
+            "pml_active_mask",
+            "interface_active_mask",
+            "physical_bulk_active_mask",
+            "pml_bulk_active_mask",
         )
         for name in tensor_names:
             setattr(self, name, getattr(self, name).to(self.device))
         self._activate_lap_tau_mode()
         return self
+
+    @staticmethod
+    def _masked_mean(values, mask):
+        if not torch.any(mask):
+            return values.new_tensor(0.0)
+        return torch.mean(values[mask])
 
     def _precompute_pml_lap_tau(self, pml, tau_d, diff_ops):
         """预计算 PML 拉伸走时拉普拉斯 Δ̃τ 和梯度系数。
@@ -210,10 +255,48 @@ class ResidualComputer:
 
         # --- 5. L_pde = mean(mask · |R_pde|²) ---
         res_sq = R_pde.real ** 2 + R_pde.imag ** 2
-        loss_pde = torch.mean(self.loss_mask * res_sq)
+        loss_pde_physical = self._masked_mean(res_sq, self.physical_active_mask)
+        loss_pde_pml = self._masked_mean(res_sq, self.pml_active_mask)
+        loss_pde_interface = self._masked_mean(res_sq, self.interface_active_mask)
+        loss_pde_physical_bulk = self._masked_mean(res_sq, self.physical_bulk_active_mask)
+        loss_pde_pml_bulk = self._masked_mean(res_sq, self.pml_bulk_active_mask)
+
+        if self.region_weighting_enabled:
+            coeff_physical = self.lambda_physical
+            coeff_pml = self.lambda_pml
+            if self.pml_fraction is not None:
+                coeff_physical = coeff_physical * max(0.0, 1.0 - self.pml_fraction)
+                coeff_pml = coeff_pml * max(0.0, self.pml_fraction)
+            coeff_interface = self.lambda_interface * self.interface_oversample
+
+            weighted_terms = []
+            weighted_coeffs = []
+            if torch.any(self.physical_bulk_active_mask):
+                weighted_terms.append(loss_pde_physical_bulk)
+                weighted_coeffs.append(coeff_physical)
+            if torch.any(self.pml_bulk_active_mask):
+                weighted_terms.append(loss_pde_pml_bulk)
+                weighted_coeffs.append(coeff_pml)
+            if torch.any(self.interface_active_mask):
+                weighted_terms.append(loss_pde_interface)
+                weighted_coeffs.append(coeff_interface)
+
+            coeff_sum = sum(weighted_coeffs)
+            if coeff_sum <= 0.0 or not weighted_terms:
+                loss_pde = torch.mean(self.loss_mask * res_sq)
+            else:
+                loss_pde = sum(
+                    term * (coeff / coeff_sum)
+                    for term, coeff in zip(weighted_terms, weighted_coeffs)
+                )
+        else:
+            loss_pde = torch.mean(self.loss_mask * res_sq)
 
         return {
             'residual_real': R_pde.real.detach(),
             'residual_imag': R_pde.imag.detach(),
             'loss_pde': loss_pde,
+            'loss_pde_physical': loss_pde_physical.detach(),
+            'loss_pde_pml': loss_pde_pml.detach(),
+            'loss_pde_interface': loss_pde_interface.detach(),
         }

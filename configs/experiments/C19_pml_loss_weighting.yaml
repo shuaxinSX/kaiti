@@ -1,0 +1,2672 @@
+batch_id: C19
+name: pml_loss_weighting
+status: active
+entrypoint: train
+purpose: PML residual weighting and collocation balance.
+expected_runs: 80
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 5000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 10.0
+    supervision:
+      enabled: true
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: smooth_lens__omega120__N306__lpml0p01__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: &id001
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p01__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p01__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p01__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p01__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p01__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p01__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p01__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p01__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p01__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p01__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p01__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p01__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p01__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p01__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p01__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.01
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p1__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p1__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p1__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p1__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p1__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p1__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p1__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p1__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p1__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p1__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p1__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p1__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml0p1__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml0p1__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml0p1__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml0p1__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 0.1
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml1p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml1p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml1p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml1p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml1p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml1p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml1p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml1p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml1p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml1p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml1p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml1p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml1p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml1p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml1p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml1p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 1.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml10p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml10p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml10p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml10p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml10p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml10p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml10p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml10p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml10p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml10p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml10p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml10p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml10p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml10p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml10p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml10p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 10.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml100p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml100p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml100p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml100p0__pf0p05
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.05
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml100p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml100p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml100p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml100p0__pf0p15
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.15
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml100p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml100p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml100p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml100p0__pf0p25
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.25
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__lpml100p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__lpml100p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__lpml100p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__lpml100p0__pf0p4
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      lambda_physical: 1.0
+      lambda_pml: 100.0
+      lambda_interface: 1.0
+    sampling:
+      pml_fraction: 0.4
+      interface_oversample: 2.0
+      interface_band_h: 4
+  reference_prep:
+    enabled: true
+    label_name: matched

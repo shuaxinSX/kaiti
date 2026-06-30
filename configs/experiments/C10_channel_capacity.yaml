@@ -1,0 +1,699 @@
+batch_id: C10
+name: channel_capacity
+status: active
+entrypoint: train
+purpose: Channel-width capacity sweep.
+expected_runs: 24
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 5000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: smooth_lens__omega120__N306__L08__C016
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 16
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C016
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 16
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C016
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 16
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C016
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 16
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L08__C032
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C032
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C032
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C032
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L08__C048
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C048
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C048
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C048
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L08__C064
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 64
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C064
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 64
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C064
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 64
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C064
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 64
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L08__C096
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 96
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C096
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 96
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C096
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 96
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C096
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 96
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L08__C128
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 128
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L08__C128
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 8
+      nsno_channels: 128
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__N306__L12__C128
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 128
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__N306__L12__C128
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model:
+      nsno_blocks: 12
+      nsno_channels: 128
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope

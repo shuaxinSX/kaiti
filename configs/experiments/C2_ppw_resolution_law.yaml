@@ -1,0 +1,984 @@
+batch_id: C2
+name: ppw_resolution_law
+status: active
+entrypoint: train
+purpose: Resolution law sweep over ppw at representative high frequencies.
+expected_runs: 36
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 5000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 10.0
+    supervision:
+      enabled: true
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: smooth_lens__omega090__ppw06__N086__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 86
+      ny: 86
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: &id001
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw06__N086__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 86
+      ny: 86
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__ppw08__N115__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw08__N115__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__ppw10__N144__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 144
+      ny: 144
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw10__N144__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 144
+      ny: 144
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__ppw12__N172__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 172
+      ny: 172
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw12__N172__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 172
+      ny: 172
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__ppw16__N230__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw16__N230__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__ppw24__N344__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__ppw24__N344__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw06__N172__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 172
+      ny: 172
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__ppw06__N172__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 172
+      ny: 172
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw08__N230__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__ppw08__N230__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw10__N287__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 287
+      ny: 287
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__ppw10__N287__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 287
+      ny: 287
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw12__N344__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__ppw12__N344__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw16__N459__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__ppw16__N459__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__ppw24__N688__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 688
+      ny: 688
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 688 exceeds train cap 512
+- run_id: layered__omega180__ppw24__N688__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 688
+      ny: 688
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 688 exceeds train cap 512
+- run_id: smooth_lens__omega300__ppw06__N287__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 287
+      ny: 287
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega300__ppw06__N287__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 287
+      ny: 287
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega300__ppw08__N382__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 382
+      ny: 382
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega300__ppw08__N382__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 382
+      ny: 382
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega300__ppw10__N478__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 478
+      ny: 478
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega300__ppw10__N478__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 478
+      ny: 478
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega300__ppw12__N573__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 573
+      ny: 573
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: layered__omega300__ppw12__N573__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 573
+      ny: 573
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: smooth_lens__omega300__ppw16__N764__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 764
+      ny: 764
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 764 exceeds train cap 512
+- run_id: layered__omega300__ppw16__N764__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 764
+      ny: 764
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 764 exceeds train cap 512
+- run_id: smooth_lens__omega300__ppw24__N1146__best_hybrid
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 300.0
+    grid:
+      nx: 1146
+      ny: 1146
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 1146 exceeds train cap 512
+- run_id: layered__omega300__ppw24__N1146__best_hybrid
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 300.0
+    grid:
+      nx: 1146
+      ny: 1146
+    pml:
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 1146 exceeds train cap 512

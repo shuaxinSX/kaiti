@@ -1,0 +1,2 @@
+batch_id,batch_name,run_id,entrypoint,has_summary,has_losses_csv,has_reference_metrics_json,local_output_dir
+C5,laptau_strictness,layered__omega180__N459__pml24__center__stretched_divergence,train,False,False,False,/Users/ccf/Desktop/开题汇总/开题X/kaiti-highk-results-ep10000/C5_laptau_strictness/layered__omega180__N459__pml24__center__stretched_divergence

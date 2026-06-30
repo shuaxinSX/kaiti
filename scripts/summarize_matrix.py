@@ -1,7 +1,7 @@
 """
-Summarize A6 matrix outputs without mutating core training code.
+Summarize B/C matrix outputs without mutating core training code.
 
-The summarizer only reads persisted run artifacts plus A6 launcher sidecars under
+The summarizer only reads persisted run artifacts plus launcher sidecars under
 outputs/matrix/. It may derive extra tables from already-saved grids and models,
 but it never edits the original training/evaluation scripts.
 """
@@ -201,7 +201,7 @@ PARAM_COUNT_CACHE: Dict[str, Optional[int]] = {}
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Summarize A6 matrix outputs.")
+    parser = argparse.ArgumentParser(description="Summarize B/C matrix outputs.")
     parser.add_argument(
         "--output-root",
         default="outputs/matrix",
@@ -307,7 +307,11 @@ def safe_log10(value: Any) -> float:
 
 def load_batch_specs() -> Dict[str, Dict[str, Any]]:
     specs: Dict[str, Dict[str, Any]] = {}
-    for path in sorted((repo_root() / "configs" / "experiments").glob("B*.yaml")):
+    for path in sorted(
+        path
+        for path in (repo_root() / "configs" / "experiments").glob("*.yaml")
+        if path.name.startswith(("B", "C"))
+    ):
         spec = load_yaml(path)
         batch_id = str(spec.get("batch_id", path.stem.split("_", 1)[0]))
         spec["__path__"] = str(path)

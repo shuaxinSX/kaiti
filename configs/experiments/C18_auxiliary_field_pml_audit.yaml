@@ -1,0 +1,2456 @@
+batch_id: C18
+name: auxiliary_field_pml_audit
+status: active
+entrypoint: train
+purpose: Auxiliary-field PML audit across frequency, media, and width.
+expected_runs: 96
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 3000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: homogeneous__omega060__ppw12__N115__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: &id001
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw12__N115__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw12__N115__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw12__N115__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw12__N115__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw12__N115__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw16__N153__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw16__N153__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw16__N153__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw16__N153__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw16__N153__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw16__N153__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw12__N230__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw12__N230__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw12__N230__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw12__N230__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw12__N230__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw12__N230__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw16__N306__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw16__N306__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw16__N306__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw16__N306__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw16__N306__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw16__N306__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw12__N344__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw12__N344__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw12__N344__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw12__N344__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw12__N344__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw12__N344__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw16__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw16__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw16__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw16__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw16__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw16__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw12__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw12__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega240__ppw12__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega240__ppw12__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega240__ppw12__N459__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega240__ppw12__N459__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw16__N612__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: homogeneous__omega240__ppw16__N612__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: smooth_lens__omega240__ppw16__N612__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: smooth_lens__omega240__ppw16__N612__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: layered__omega240__ppw16__N612__w16__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: layered__omega240__ppw16__N612__w24__stretched_divergence
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: stretched_divergence
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: homogeneous__omega060__ppw12__N115__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw12__N115__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw12__N115__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw12__N115__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw12__N115__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw12__N115__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 115
+      ny: 115
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw16__N153__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega060__ppw16__N153__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw16__N153__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega060__ppw16__N153__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw16__N153__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega060__ppw16__N153__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 153
+      ny: 153
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw12__N230__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw12__N230__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw12__N230__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw12__N230__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw12__N230__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw12__N230__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw16__N306__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega120__ppw16__N306__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw16__N306__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega120__ppw16__N306__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw16__N306__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega120__ppw16__N306__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw12__N344__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw12__N344__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw12__N344__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw12__N344__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw12__N344__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw12__N344__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 344
+      ny: 344
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw16__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega180__ppw16__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw16__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega180__ppw16__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw16__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega180__ppw16__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw12__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw12__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega240__ppw12__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: smooth_lens__omega240__ppw12__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega240__ppw12__N459__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: layered__omega240__ppw12__N459__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: homogeneous__omega240__ppw16__N612__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: homogeneous__omega240__ppw16__N612__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: smooth_lens__omega240__ppw16__N612__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: smooth_lens__omega240__ppw16__N612__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: layered__omega240__ppw16__N612__w16__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512
+- run_id: layered__omega240__ppw16__N612__w24__mixed_legacy
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 240.0
+    grid:
+      nx: 612
+      ny: 612
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    residual:
+      lap_tau_mode: mixed_legacy
+    model: *id001
+    training:
+      epochs: 3000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 612 exceeds train cap 512

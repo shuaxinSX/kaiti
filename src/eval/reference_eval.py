@@ -16,6 +16,7 @@ import numpy as np
 import torch
 
 from src.config import load_config
+from src.core.region_masks import build_region_masks
 from src.eval.reference_solver import solve_reference_scattering
 from src.train.trainer import Trainer
 
@@ -44,13 +45,9 @@ def _complex_to_dual_channel(field, device):
 
 def _physical_masks(trainer):
     physical_y, physical_x = trainer.grid.physical_slice()
-    physical_mask = ~trainer.grid.pml_mask()
-    evaluation_mask = physical_mask & trainer.loss_mask.astype(bool)
-    return {
-        "physical_slice": (physical_y, physical_x),
-        "physical_mask": physical_mask,
-        "evaluation_mask": evaluation_mask,
-    }
+    region_masks = build_region_masks(trainer.grid, loss_mask=trainer.loss_mask.astype(bool))
+    region_masks["physical_slice"] = (physical_y, physical_x)
+    return region_masks
 
 
 def _wrapped_phase_difference(predicted, reference):
@@ -168,9 +165,30 @@ def compute_reference_metrics(trainer, reference_envelope, predicted_envelope=No
         "amp_mae_to_reference": amp_mae,
         "phase_mae_to_reference": phase_mae,
     }
+    interface_mask = masks["interface_4h_active"] & (np.abs(reference_envelope) > _COMPARISON_PHASE_EPS)
+    interface_points = int(np.count_nonzero(interface_mask))
+    if interface_points:
+        pred_if = predicted_envelope[interface_mask]
+        ref_if = reference_envelope[interface_mask]
+        diff_if = pred_if - ref_if
+        reference_norm_if = max(float(np.linalg.norm(ref_if)), _COMPARISON_NORM_EPS)
+        comparison_metrics.update(
+            {
+                "rel_l2_to_reference_interface_4h": float(np.linalg.norm(diff_if) / reference_norm_if),
+                "phase_mae_interface_4h_to_reference": float(np.mean(np.abs(phase_error[interface_mask]))),
+            }
+        )
+    else:
+        comparison_metrics.update(
+            {
+                "rel_l2_to_reference_interface_4h": 0.0,
+                "phase_mae_interface_4h_to_reference": 0.0,
+            }
+        )
     summary_metrics.update(comparison_metrics)
     reference_metrics.update(comparison_metrics)
     reference_metrics["phase_metric_points"] = phase_metric_points
+    reference_metrics["interface_phase_metric_points_4h"] = interface_points
     error_fields = {
         "absolute_error": np.abs(predicted_envelope - reference_envelope),
         "phase_error": phase_error,

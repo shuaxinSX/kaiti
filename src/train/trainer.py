@@ -36,6 +36,21 @@ def resolve_residual_config(cfg):
     return {"lap_tau_mode": lap_tau_mode}
 
 
+def resolve_pde_weighting_config(cfg):
+    """Parse optional region-weighting controls for PDE residual loss."""
+    training_cfg = cfg.training if hasattr(cfg, "training") else None
+    sampling_cfg = cfg.sampling if hasattr(cfg, "sampling") else None
+
+    return {
+        "lambda_physical": getattr(training_cfg, "lambda_physical", None) if training_cfg is not None else None,
+        "lambda_pml": getattr(training_cfg, "lambda_pml", None) if training_cfg is not None else None,
+        "lambda_interface": getattr(training_cfg, "lambda_interface", None) if training_cfg is not None else None,
+        "pml_fraction": getattr(sampling_cfg, "pml_fraction", None) if sampling_cfg is not None else None,
+        "interface_oversample": getattr(sampling_cfg, "interface_oversample", None) if sampling_cfg is not None else None,
+        "interface_band_h": getattr(sampling_cfg, "interface_band_h", 4) if sampling_cfg is not None else 4,
+    }
+
+
 def resolve_device(requested_device=None):
     """Resolve an execution device while keeping CPU as the backward-compatible default."""
     if requested_device is None:
@@ -121,12 +136,19 @@ class Trainer:
         self.loss_mask = compute_loss_mask(self.grid, self.source, cfg)
         self.omega = omega
         residual_cfg = resolve_residual_config(cfg)
+        pde_weighting_cfg = resolve_pde_weighting_config(cfg)
 
         # 残差计算器
         self.residual_computer = ResidualComputer(
             self.grid, self.pml, self.tau_d, self.rhs,
             self.loss_mask, omega, self.diff_ops,
             lap_tau_mode=residual_cfg["lap_tau_mode"],
+            lambda_physical=pde_weighting_cfg["lambda_physical"],
+            lambda_pml=pde_weighting_cfg["lambda_pml"],
+            lambda_interface=pde_weighting_cfg["lambda_interface"],
+            pml_fraction=pde_weighting_cfg["pml_fraction"],
+            interface_oversample=pde_weighting_cfg["interface_oversample"],
+            interface_band_h=pde_weighting_cfg["interface_band_h"],
         ).to(self.device)
 
         # 网络输入
@@ -234,16 +256,23 @@ class Trainer:
                 "loss_total": loss_total_item,
                 "loss_pde": loss_pde_item,
                 "loss_data": loss_data_item,
+                "loss_pde_physical": float(result["loss_pde_physical"].item()),
+                "loss_pde_pml": float(result["loss_pde_pml"].item()),
+                "loss_pde_interface": float(result["loss_pde_interface"].item()),
             }
 
             if (epoch + 1) % max(1, epochs // 10) == 0 or epoch == 0:
                 logger.info(
-                    "Epoch %d/%d, loss_total=%.6e, loss_pde=%.6e, loss_data=%.6e",
+                    "Epoch %d/%d, loss_total=%.6e, loss_pde=%.6e, loss_data=%.6e, "
+                    "loss_pde_phys=%.6e, loss_pde_pml=%.6e, loss_pde_if=%.6e",
                     epoch + 1,
                     epochs,
                     loss_total_item,
                     loss_pde_item,
                     loss_data_item,
+                    self.last_step_metrics["loss_pde_physical"],
+                    self.last_step_metrics["loss_pde_pml"],
+                    self.last_step_metrics["loss_pde_interface"],
                 )
 
         logger.info("训练完成。最终 loss_total=%.6e", self.loss_history_total[-1])

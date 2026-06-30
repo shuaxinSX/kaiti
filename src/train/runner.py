@@ -11,6 +11,7 @@ import json
 import logging
 import math
 import time
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
@@ -19,9 +20,10 @@ import numpy as np
 import torch
 import yaml
 
-from src.config import load_config
+from src.config import Config, load_config
 from src.eval import compute_prediction_envelope, export_reference_artifacts
 from src.train.trainer import Trainer
+from src.core.region_masks import build_region_masks
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -43,7 +45,7 @@ def configure_logging(level="INFO"):
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
 
-def resolve_output_dir(save_dir, output_dir=None):
+def resolve_output_dir(save_dir, output_dir=None, exist_ok=False):
     """Resolve the final output directory under the current project folder."""
     if output_dir is not None:
         final_dir = Path(output_dir)
@@ -54,8 +56,119 @@ def resolve_output_dir(save_dir, output_dir=None):
     if not final_dir.is_absolute():
         final_dir = Path.cwd() / final_dir
 
-    final_dir.mkdir(parents=True, exist_ok=False)
+    final_dir.mkdir(parents=True, exist_ok=exist_ok)
     return final_dir
+
+
+def deep_merge_dicts(base, overlay):
+    """Recursively merge dictionaries without mutating the inputs."""
+    result = deepcopy(base)
+    for key, value in overlay.items():
+        if isinstance(result.get(key), dict) and isinstance(value, dict):
+            result[key] = deep_merge_dicts(result[key], value)
+        else:
+            result[key] = deepcopy(value)
+    return result
+
+
+def curriculum_enabled(cfg):
+    training_cfg = cfg.training if hasattr(cfg, "training") else None
+    curriculum_cfg = getattr(training_cfg, "curriculum", None)
+    return bool(getattr(curriculum_cfg, "enabled", False))
+
+
+def curriculum_stage_uses_supervision(cfg):
+    training_cfg = cfg.training if hasattr(cfg, "training") else None
+    if training_cfg is None:
+        return False
+
+    lambda_data = float(getattr(training_cfg, "lambda_data", 0.0))
+    supervision_cfg = getattr(training_cfg, "supervision", None)
+    if supervision_cfg is None:
+        return False
+
+    reference_path = getattr(supervision_cfg, "reference_path", None)
+    return (
+        lambda_data > 0.0
+        and bool(getattr(supervision_cfg, "enabled", False))
+        and reference_path is not None
+        and str(reference_path).strip() != ""
+    )
+
+
+def build_reference_only_cfg(cfg):
+    reference_dict = cfg.to_dict()
+    training_dict = reference_dict.setdefault("training", {})
+    training_dict["lambda_data"] = 0.0
+    supervision_dict = training_dict.setdefault("supervision", {})
+    supervision_dict["enabled"] = False
+    supervision_dict["reference_path"] = None
+    return Config(reference_dict)
+
+
+def ensure_curriculum_stage_reference(cfg, device, final_output_dir, stage_index, stage_name):
+    stage_ref_dir = final_output_dir / "_curriculum_reference_cache" / f"{stage_index:02d}_{stage_name}"
+    reference_path = stage_ref_dir / "reference_envelope.npy"
+    if reference_path.exists():
+        return reference_path
+
+    stage_ref_dir.mkdir(parents=True, exist_ok=True)
+    logger.info(
+        "Materializing curriculum reference for stage %d (%s): %s",
+        stage_index,
+        stage_name,
+        stage_ref_dir,
+    )
+    reference_cfg = build_reference_only_cfg(cfg)
+    trainer = Trainer(reference_cfg, device=device)
+    export_reference_artifacts(trainer, stage_ref_dir)
+    return reference_path
+
+
+def filter_compatible_state_dict(model, state_dict):
+    """Keep only tensors whose key and shape match the target model."""
+    model_state = model.state_dict()
+    filtered = {}
+    skipped = {}
+    for key, value in state_dict.items():
+        if key not in model_state:
+            skipped[key] = "missing_key"
+            continue
+        if tuple(model_state[key].shape) != tuple(value.shape):
+            skipped[key] = f"shape_mismatch:{tuple(value.shape)}->{tuple(model_state[key].shape)}"
+            continue
+        filtered[key] = value
+    return filtered, skipped
+
+
+def load_model_state_compat(model, state_dict, strict=False):
+    """Load a checkpoint while tolerating stage-wise depth growth."""
+    filtered, skipped = filter_compatible_state_dict(model, state_dict)
+    missing, unexpected = model.load_state_dict(filtered, strict=False)
+    if strict and (missing or unexpected or skipped):
+        raise RuntimeError(
+            "Strict warm-start load failed. "
+            f"missing={list(missing)}, unexpected={list(unexpected)}, skipped={list(skipped)}"
+        )
+    return {
+        "loaded_tensor_count": len(filtered),
+        "missing_keys": list(missing),
+        "unexpected_keys": list(unexpected),
+        "skipped_keys": dict(skipped),
+    }
+
+
+def move_state_to_cpu(payload):
+    """Recursively move tensors inside nested optimizer state payloads to CPU."""
+    if isinstance(payload, torch.Tensor):
+        return payload.detach().cpu()
+    if isinstance(payload, dict):
+        return {key: move_state_to_cpu(value) for key, value in payload.items()}
+    if isinstance(payload, list):
+        return [move_state_to_cpu(value) for value in payload]
+    if isinstance(payload, tuple):
+        return tuple(move_state_to_cpu(value) for value in payload)
+    return payload
 
 
 def save_losses(losses, output_dir):
@@ -159,8 +272,9 @@ def compute_model_diagnostics(trainer):
     residual_mag = np.hypot(residual_real, residual_imag)
 
     physical_y, physical_x = trainer.grid.physical_slice()
-    physical_mask = ~trainer.grid.pml_mask()
-    evaluation_mask = physical_mask & trainer.loss_mask.astype(bool)
+    region_masks = build_region_masks(trainer.grid, loss_mask=trainer.loss_mask.astype(bool))
+    physical_mask = region_masks["physical_mask"]
+    evaluation_mask = region_masks["evaluation_mask"]
     slowness_physical = trainer.medium.slowness[physical_y, physical_x]
     slowness_sq_contrast = float(np.max(np.abs(slowness_physical ** 2 - trainer.medium.s0 ** 2)))
 
@@ -179,6 +293,7 @@ def compute_model_diagnostics(trainer):
         "physical_slice": (physical_y, physical_x),
         "physical_mask": physical_mask,
         "evaluation_mask": evaluation_mask,
+        "region_masks": region_masks,
         "omega": float(trainer.omega),
         "grid_h": float(trainer.grid.h),
         "s0": float(trainer.medium.s0),
@@ -254,12 +369,26 @@ def estimate_neumann_capacity_budget(
 
 def compute_metric_bundle(losses, diagnostics):
     """Assemble scalar metrics that summarize convergence and final field quality."""
+    def masked_rmse(values, mask):
+        subset = values[mask]
+        if subset.size == 0:
+            return 0.0
+        return float(np.sqrt(np.mean(subset ** 2)))
+
+    def masked_mean(values, mask):
+        subset = values[mask]
+        if subset.size == 0:
+            return 0.0
+        return float(np.mean(subset))
+
     losses_array = np.asarray(losses, dtype=np.float64)
     tail_window = min(len(losses_array), 100)
     evaluation_values = diagnostics["residual_mag"][diagnostics["evaluation_mask"]]
     physical_values = diagnostics["residual_mag"][diagnostics["physical_mask"]]
     wavefield_values = diagnostics["wavefield_mag"][diagnostics["physical_mask"]]
     scattering_values = diagnostics["a_scat_mag"][diagnostics["physical_mask"]]
+    region_masks = diagnostics["region_masks"]
+    wavefield_energy = diagnostics["wavefield_mag"] ** 2
     scattering_mean = float(np.mean(scattering_values))
     scattering_p95 = float(np.quantile(scattering_values, 0.95))
 
@@ -277,6 +406,13 @@ def compute_metric_bundle(losses, diagnostics):
         "residual_p95_evaluation": float(np.quantile(evaluation_values, 0.95)),
         "residual_max_evaluation": float(np.max(evaluation_values)),
         "residual_mean_physical": float(np.mean(physical_values)),
+        "residual_rmse_physical": masked_rmse(diagnostics["residual_mag"], region_masks["physical_active_mask"]),
+        "residual_rmse_pml": masked_rmse(diagnostics["residual_mag"], region_masks["pml_active_mask"]),
+        "residual_rmse_interface_1h": masked_rmse(diagnostics["residual_mag"], region_masks["interface_1h_active"]),
+        "residual_rmse_interface_2h": masked_rmse(diagnostics["residual_mag"], region_masks["interface_2h_active"]),
+        "residual_rmse_interface_4h": masked_rmse(diagnostics["residual_mag"], region_masks["interface_4h_active"]),
+        "interface_residual_rmse": masked_rmse(diagnostics["residual_mag"], region_masks["interface_4h_active"]),
+        "outer_boundary_residual_rmse": masked_rmse(diagnostics["residual_mag"], region_masks["outer_boundary_pml_band"]),
         "residual_p95_physical": float(np.quantile(physical_values, 0.95)),
         "residual_max_physical": float(np.max(physical_values)),
         "wavefield_mag_mean_physical": float(np.mean(wavefield_values)),
@@ -285,7 +421,14 @@ def compute_metric_bundle(losses, diagnostics):
         "scattering_mag_mean_physical": scattering_mean,
         "scattering_mag_p95_physical": scattering_p95,
         "scattering_mag_max_physical": float(np.max(scattering_values)),
+        "physical_energy_mean": masked_mean(wavefield_energy, region_masks["physical_active_mask"]),
+        "pml_energy_mean": masked_mean(wavefield_energy, region_masks["pml_active_mask"]),
+        "pml_energy_inner_band": masked_mean(wavefield_energy, region_masks["pml_inner_band"]),
+        "pml_energy_outer_band": masked_mean(wavefield_energy, region_masks["pml_outer_band"]),
     }
+    metrics["pml_to_physical_energy_ratio"] = (
+        float(metrics["pml_energy_mean"] / max(metrics["physical_energy_mean"], _NUMERIC_EPS))
+    )
     metrics.update(
         estimate_phase_reconstruction_budget(
             diagnostics["omega"],
@@ -516,27 +659,47 @@ def evaluate_saved_run(run_dir, device="auto"):
     return summary
 
 
-def run_training(
-    base_config,
-    overlay_config=None,
+def execute_training_cfg(
+    cfg,
     device="auto",
-    epochs=None,
     output_dir=None,
-    velocity_model=None,
+    warm_start_state=None,
+    warm_start_strict=False,
+    optimizer_state=None,
+    output_dir_exist_ok=False,
 ):
-    """Run one end-to-end training job and persist artifacts."""
-    cfg = load_config(base_config, overlay_config)
-    if velocity_model is not None:
-        cfg.medium.velocity_model = velocity_model
-    if epochs is not None:
-        cfg.training.epochs = int(epochs)
+    """Run one training configuration and return saved artifacts plus CPU states."""
     configure_logging(cfg.logging.level)
-    final_output_dir = resolve_output_dir(cfg.logging.save_dir, output_dir)
+    final_output_dir = resolve_output_dir(
+        cfg.logging.save_dir,
+        output_dir,
+        exist_ok=output_dir_exist_ok,
+    )
     save_config_snapshot(cfg, final_output_dir)
 
     trainer = Trainer(cfg, device=device)
-    actual_epochs = cfg.training.epochs
+    warm_start_info = None
+    if warm_start_state is not None:
+        warm_start_info = load_model_state_compat(
+            trainer.model,
+            warm_start_state,
+            strict=warm_start_strict,
+        )
+        logger.info(
+            "已加载 warm-start checkpoint: loaded=%d skipped=%d",
+            warm_start_info["loaded_tensor_count"],
+            len(warm_start_info["skipped_keys"]),
+        )
 
+    optimizer_reused = False
+    if optimizer_state is not None:
+        try:
+            trainer.optimizer.load_state_dict(optimizer_state)
+            optimizer_reused = True
+        except ValueError as exc:
+            logger.warning("optimizer state 不兼容，跳过复用: %s", exc)
+
+    actual_epochs = cfg.training.epochs
     logger.info("运行输出目录: %s", final_output_dir)
     start_time = time.perf_counter()
     losses = trainer.train(epochs=actual_epochs)
@@ -556,11 +719,155 @@ def run_training(
         "runtime_sec": runtime_sec,
         "velocity_model": cfg.medium.velocity_model,
         "grid_shape": [int(trainer.grid.ny_total), int(trainer.grid.nx_total)],
+        "final_loss_pde": float(trainer.last_step_metrics.get("loss_pde", 0.0)),
+        "final_loss_data": float(trainer.last_step_metrics.get("loss_data", 0.0)),
+        "final_loss_pde_physical": float(trainer.last_step_metrics.get("loss_pde_physical", 0.0)),
+        "final_loss_pde_pml": float(trainer.last_step_metrics.get("loss_pde_pml", 0.0)),
+        "final_loss_pde_interface": float(trainer.last_step_metrics.get("loss_pde_interface", 0.0)),
+        "optimizer_reused": optimizer_reused,
     }
+    if warm_start_info is not None:
+        summary.update(
+            {
+                "warm_start_loaded_tensors": int(warm_start_info["loaded_tensor_count"]),
+                "warm_start_missing_keys": warm_start_info["missing_keys"],
+                "warm_start_unexpected_keys": warm_start_info["unexpected_keys"],
+                "warm_start_skipped_keys": warm_start_info["skipped_keys"],
+            }
+        )
     summary.update(metrics)
     save_summary(summary, final_output_dir)
 
+    model_state = {key: value.detach().cpu() for key, value in trainer.model.state_dict().items()}
+    optimizer_state_cpu = move_state_to_cpu(trainer.optimizer.state_dict())
+    return {
+        "summary": summary,
+        "output_dir": final_output_dir,
+        "model_state": model_state,
+        "optimizer_state": optimizer_state_cpu,
+    }
+
+
+def run_curriculum_training(cfg, device="auto", output_dir=None):
+    """Run a multi-stage curriculum / warm-start schedule."""
+    configure_logging(cfg.logging.level)
+    final_output_dir = resolve_output_dir(cfg.logging.save_dir, output_dir)
+    curriculum_cfg = cfg.training.curriculum
+    stages = list(curriculum_cfg.stages) if hasattr(curriculum_cfg, "stages") else []
+    if not stages:
+        raise ValueError("training.curriculum.enabled=true requires at least one stage.")
+
+    plan_path = final_output_dir / "curriculum_plan.yaml"
+    with open(plan_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump(cfg.to_dict(), f, sort_keys=False, allow_unicode=True)
+
+    base_dict = cfg.to_dict()
+    stage_summaries = []
+    prev_model_state = None
+    prev_optimizer_state = None
+    final_result = None
+
+    for stage_index, stage in enumerate(stages, start=1):
+        stage_name = str(stage.get("name", f"stage_{stage_index:02d}"))
+        stage_overrides = stage.get("overrides", {})
+        stage_dict = deep_merge_dicts(base_dict, stage_overrides)
+        stage_dict.setdefault("training", {})
+        stage_dict["training"]["curriculum"] = {"enabled": False}
+        stage_cfg = Config(stage_dict)
+        if curriculum_stage_uses_supervision(stage_cfg):
+            reference_path = ensure_curriculum_stage_reference(
+                stage_cfg,
+                device=device,
+                final_output_dir=final_output_dir,
+                stage_index=stage_index,
+                stage_name=stage_name,
+            )
+            stage_dict.setdefault("training", {})
+            stage_dict["training"].setdefault("supervision", {})
+            stage_dict["training"]["supervision"]["enabled"] = True
+            stage_dict["training"]["supervision"]["reference_path"] = str(reference_path)
+            stage_cfg = Config(stage_dict)
+
+        stage_warm = stage.get("warm_start", {}) or {}
+        use_previous = prev_model_state is not None and bool(stage_warm.get("enabled", True))
+        reuse_optimizer = use_previous and not bool(stage_warm.get("reset_optimizer", True))
+        stage_output_dir = (
+            final_output_dir
+            if stage_index == len(stages)
+            else final_output_dir / "stages" / f"{stage_index:02d}_{stage_name}"
+        )
+
+        logger.info(
+            "Curriculum stage %d/%d: %s (reuse_model=%s, reuse_optimizer=%s)",
+            stage_index,
+            len(stages),
+            stage_name,
+            use_previous,
+            reuse_optimizer,
+        )
+        final_result = execute_training_cfg(
+            stage_cfg,
+            device=device,
+            output_dir=stage_output_dir,
+            warm_start_state=prev_model_state if use_previous else None,
+            warm_start_strict=bool(stage_warm.get("strict", False)),
+            optimizer_state=prev_optimizer_state if reuse_optimizer else None,
+            output_dir_exist_ok=(stage_index == len(stages)),
+        )
+        prev_model_state = final_result["model_state"]
+        prev_optimizer_state = final_result["optimizer_state"]
+        stage_summaries.append(
+            {
+                "stage_index": stage_index,
+                "stage_name": stage_name,
+                "omega": float(stage_cfg.physics.omega),
+                "grid_nx": int(stage_cfg.grid.nx),
+                "grid_ny": int(stage_cfg.grid.ny),
+                "nsno_blocks": int(stage_cfg.model.nsno_blocks),
+                "epochs": int(stage_cfg.training.epochs),
+                "lr": float(stage_cfg.training.lr),
+                "output_dir": str(final_result["output_dir"]),
+                "final_loss": float(final_result["summary"]["final_loss"]),
+                "runtime_sec": float(final_result["summary"]["runtime_sec"]),
+                "optimizer_reused": bool(final_result["summary"].get("optimizer_reused", False)),
+            }
+        )
+
+    if final_result is None:
+        raise RuntimeError("Curriculum execution produced no final stage.")
+
+    summary = dict(final_result["summary"])
+    summary.update(
+        {
+            "curriculum_enabled": True,
+            "curriculum_schedule": getattr(curriculum_cfg, "schedule_name", None),
+            "curriculum_stage_count": len(stage_summaries),
+            "curriculum_plan_path": str(plan_path),
+        }
+    )
+    save_summary(summary, final_output_dir)
+    with open(final_output_dir / "curriculum_stages.json", "w", encoding="utf-8") as f:
+        json.dump(stage_summaries, f, indent=2, ensure_ascii=False)
     return summary
+
+
+def run_training(
+    base_config,
+    overlay_config=None,
+    device="auto",
+    epochs=None,
+    output_dir=None,
+    velocity_model=None,
+):
+    """Run one end-to-end training job and persist artifacts."""
+    cfg = load_config(base_config, overlay_config)
+    if velocity_model is not None:
+        cfg.medium.velocity_model = velocity_model
+    if epochs is not None:
+        cfg.training.epochs = int(epochs)
+    if curriculum_enabled(cfg):
+        return run_curriculum_training(cfg, device=device, output_dir=output_dir)
+    return execute_training_cfg(cfg, device=device, output_dir=output_dir)["summary"]
 
 
 def build_arg_parser():

@@ -1,0 +1,1945 @@
+batch_id: C3
+name: grid_pollution_phase_budget
+status: active
+entrypoint: reference_only
+purpose: Reference-first grid pollution and phase budget campaign.
+expected_runs: 114
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  training:
+    epochs: 1
+  logging:
+    level: INFO
+matrix:
+- run_id: homogeneous__omega030__N064__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N064__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N064__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega030__N096__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N096__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N096__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega030__N128__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N128__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N128__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega030__N192__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N192__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N192__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega030__N256__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N256__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N256__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega030__N384__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 30.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega030__N384__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 30.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega030__N384__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 30.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N064__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N064__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N064__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N096__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N096__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N096__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N128__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N128__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N128__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N192__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N192__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N192__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N256__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N256__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N256__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega060__N384__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 60.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N384__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega060__N384__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N064__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N064__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N064__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N096__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N096__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N096__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N128__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N128__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N128__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N192__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N192__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N192__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N256__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N256__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N256__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega090__N384__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 90.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega090__N384__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega090__N384__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N064__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N064__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N064__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N096__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N096__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N096__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N128__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N128__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N128__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N192__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N192__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N192__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N256__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N256__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N256__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega120__N384__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 120.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega120__N384__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega120__N384__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N064__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N064__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N064__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 64
+      ny: 64
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N096__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N096__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N096__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N128__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N128__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N128__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N192__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N192__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N192__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N256__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N256__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N256__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: homogeneous__omega180__N384__reference
+  overrides:
+    medium:
+      velocity_model: homogeneous
+    physics:
+      omega: 180.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega180__N384__reference
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: layered__omega180__N384__reference
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 384
+      ny: 384
+    pml:
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+- run_id: smooth_lens__omega060__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: &id001
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega060__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega060__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega060__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega060__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega060__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega060__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 60.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega060__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 60.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega120__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega120__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega120__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega120__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega120__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega120__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega120__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega120__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega180__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega180__N096__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 96
+      ny: 96
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega180__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega180__N128__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 128
+      ny: 128
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega180__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega180__N192__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 192
+      ny: 192
+    pml:
+      width: 16
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: smooth_lens__omega180__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train
+- run_id: layered__omega180__N256__train_subset
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 256
+      ny: 256
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  entrypoint: train

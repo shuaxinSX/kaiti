@@ -1,9 +1,8 @@
 """
-Launch the large A6 matrix from local batch specs.
+Launch large experiment matrices from local batch specs.
 
-This launcher stays on the integrated branch and reads committed matrix YAML
-definitions from `configs/experiments/B*.yaml`. It does not rely on the
-branch-specific Unix launcher from the experimental worktree.
+This launcher stays on the integrated branch and reads committed B/C matrix YAML
+definitions from `configs/experiments/`.
 """
 
 from __future__ import annotations
@@ -146,13 +145,25 @@ def stable_config_hash(payload: Dict[str, Any]) -> str:
 
 
 def discover_batch_specs(repo_root: Path) -> List[Dict[str, Any]]:
-    paths = sorted((repo_root / "configs" / "experiments").glob("B*.yaml"))
+    experiments_dir = repo_root / "configs" / "experiments"
+    paths = sorted(
+        path
+        for path in experiments_dir.glob("*.yaml")
+        if path.name.startswith(("B", "C"))
+    )
     specs: List[Dict[str, Any]] = []
     for path in paths:
         spec = load_yaml_file(path)
         spec["__file__"] = str(path.relative_to(repo_root).as_posix())
         specs.append(spec)
     return specs
+
+
+def safe_git_sha(repo_root: Path) -> str:
+    try:
+        return git_output(repo_root, "rev-parse", "HEAD").strip()
+    except Exception:
+        return "nogit"
 
 
 def is_blocked(batch_spec: Dict[str, Any], run_spec: Dict[str, Any]) -> tuple[bool, str]:
@@ -210,7 +221,7 @@ def build_manifest_rows(
 ) -> List[Dict[str, Any]]:
     base_cfg = load_yaml_file(repo_root / args.base_config)
     batch_specs = discover_batch_specs(repo_root)
-    git_sha = git_output(repo_root, "rev-parse", "HEAD").strip()
+    git_sha = safe_git_sha(repo_root)
     launched_at = datetime.now().isoformat(timespec="seconds")
 
     rows: List[Dict[str, Any]] = []

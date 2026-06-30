@@ -17,22 +17,54 @@ import torch.nn as nn
 from .spectral_conv import SpectralConv2d
 
 
+def build_activation(name):
+    normalized = str(name).strip().lower()
+    if normalized == "gelu":
+        return nn.GELU()
+    if normalized == "relu":
+        return nn.ReLU()
+    if normalized == "silu":
+        return nn.SiLU()
+    if normalized == "tanh":
+        return nn.Tanh()
+    raise ValueError(f"Unsupported activation={name!r}")
+
+
+class QuadraticPointwiseMix(nn.Module):
+    """A lightweight quadratic pointwise mixer for C20-style architecture probes."""
+
+    def __init__(self, channels):
+        super().__init__()
+        self.linear = nn.Conv2d(channels, channels, 1)
+        self.left = nn.Conv2d(channels, channels, 1)
+        self.right = nn.Conv2d(channels, channels, 1)
+
+    def forward(self, x):
+        return self.linear(x) + self.left(x) * self.right(x)
+
+
 class NeumannSpectralBlock(nn.Module):
     """单层 Neumann 散射迭代 Block。
 
     h^(k+1) = σ(W_skip · u_inc + K_θ(M_φ(V, h^(k))))
     """
 
-    def __init__(self, channels, modes1, modes2):
+    def __init__(self, channels, modes1, modes2, activation="gelu", pointwise_variant="linear"):
         super().__init__()
-        # M_φ: 逐点局部散射（1x1 conv）
-        self.local_scatter = nn.Conv2d(channels, channels, 1)
+        if pointwise_variant == "linear":
+            self.local_scatter = nn.Conv2d(channels, channels, 1)
+        elif pointwise_variant == "quadratic":
+            self.local_scatter = QuadraticPointwiseMix(channels)
+        else:
+            raise ValueError(
+                f"Unsupported pointwise_variant={pointwise_variant!r}. "
+                "Expected 'linear' or 'quadratic'."
+            )
         # K_θ: 全局积分核（FNO 谱卷积）
         self.spectral_conv = SpectralConv2d(channels, channels, modes1, modes2)
         # W_skip: 源项残差注入
         self.skip = nn.Conv2d(channels, channels, 1)
-        # 激活函数：GELU（C∞ 平滑）
-        self.activation = nn.GELU()
+        self.activation = build_activation(activation)
 
     def forward(self, h, u_inc):
         """
@@ -65,13 +97,23 @@ class NSNO2D(nn.Module):
         channels = cfg.model.nsno_channels
         modes = cfg.model.fno_modes
         n_blocks = cfg.model.nsno_blocks
+        activation = cfg.model.activation if hasattr(cfg.model, "activation") else "gelu"
+        pointwise_variant = (
+            cfg.model.pointwise_variant if hasattr(cfg.model, "pointwise_variant") else "linear"
+        )
 
         # 输入编码: 8 → hidden
         self.encoder = nn.Conv2d(self.INPUT_CHANNELS, channels, 1)
 
         # N 个 Neumann 散射 Block
         self.blocks = nn.ModuleList([
-            NeumannSpectralBlock(channels, modes, modes)
+            NeumannSpectralBlock(
+                channels,
+                modes,
+                modes,
+                activation=activation,
+                pointwise_variant=pointwise_variant,
+            )
             for _ in range(n_blocks)
         ])
 

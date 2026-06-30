@@ -1,0 +1,1317 @@
+batch_id: C15
+name: benchmark_cards
+status: active
+entrypoint: train
+purpose: SOTA narrative benchmark cards with proxy best-of variants.
+expected_runs: 35
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 5000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: cardA__reference_only
+  overrides:
+    medium: &id001
+      velocity_model: smooth_lens
+    physics: &id002
+      omega: 30.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id003
+      nx: 256
+      ny: 256
+    pml: &id004
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardA__base_nsno
+  overrides:
+    medium: *id001
+    physics: *id002
+    grid: *id003
+    pml: *id004
+    model: &id010
+      nsno_blocks: 4
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardA__deep_nsno
+  overrides:
+    medium: *id001
+    physics: *id002
+    grid: *id003
+    pml: *id004
+    model: &id011
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardA__best_hybrid_proxy
+  overrides:
+    medium: *id001
+    physics: *id002
+    grid: *id003
+    pml: *id004
+    model: &id005
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardA__best_curriculum_proxy
+  overrides:
+    medium: *id001
+    physics: *id002
+    grid: *id003
+    pml: *id004
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardB__reference_only
+  overrides:
+    medium: &id006
+      velocity_model: smooth_lens
+    physics: &id007
+      omega: 120.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id008
+      nx: 306
+      ny: 306
+    pml: &id009
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardB__base_nsno
+  overrides:
+    medium: *id006
+    physics: *id007
+    grid: *id008
+    pml: *id009
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardB__deep_nsno
+  overrides:
+    medium: *id006
+    physics: *id007
+    grid: *id008
+    pml: *id009
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardB__best_hybrid_proxy
+  overrides:
+    medium: *id006
+    physics: *id007
+    grid: *id008
+    pml: *id009
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardB__best_curriculum_proxy
+  overrides:
+    medium: *id006
+    physics: *id007
+    grid: *id008
+    pml: *id009
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardC__reference_only
+  overrides:
+    medium: &id012
+      velocity_model: layered
+    physics: &id013
+      omega: 180.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id014
+      nx: 459
+      ny: 459
+    pml: &id015
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardC__base_nsno
+  overrides:
+    medium: *id012
+    physics: *id013
+    grid: *id014
+    pml: *id015
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardC__deep_nsno
+  overrides:
+    medium: *id012
+    physics: *id013
+    grid: *id014
+    pml: *id015
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardC__best_hybrid_proxy
+  overrides:
+    medium: *id012
+    physics: *id013
+    grid: *id014
+    pml: *id015
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardC__best_curriculum_proxy
+  overrides:
+    medium: *id012
+    physics: *id013
+    grid: *id014
+    pml: *id015
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardD__reference_only
+  overrides:
+    medium: &id016
+      velocity_model: smooth_lens
+    physics: &id017
+      omega: 300.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id018
+      nx: 573
+      ny: 573
+    pml: &id019
+      width: 48
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardD__base_nsno
+  overrides:
+    medium: *id016
+    physics: *id017
+    grid: *id018
+    pml: *id019
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: cardD__deep_nsno
+  overrides:
+    medium: *id016
+    physics: *id017
+    grid: *id018
+    pml: *id019
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: cardD__best_hybrid_proxy
+  overrides:
+    medium: *id016
+    physics: *id017
+    grid: *id018
+    pml: *id019
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: cardD__best_curriculum_proxy
+  overrides:
+    medium: *id016
+    physics: *id017
+    grid: *id018
+    pml: *id019
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+  status: blocked
+  blocked_reason: grid 573 exceeds train cap 512
+- run_id: cardE__reference_only
+  overrides:
+    medium: &id020
+      velocity_model: layered
+    physics: &id021
+      omega: 180.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id022
+      nx: 230
+      ny: 230
+    pml: &id023
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardE__base_nsno
+  overrides:
+    medium: *id020
+    physics: *id021
+    grid: *id022
+    pml: *id023
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardE__deep_nsno
+  overrides:
+    medium: *id020
+    physics: *id021
+    grid: *id022
+    pml: *id023
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardE__best_hybrid_proxy
+  overrides:
+    medium: *id020
+    physics: *id021
+    grid: *id022
+    pml: *id023
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardE__best_curriculum_proxy
+  overrides:
+    medium: *id020
+    physics: *id021
+    grid: *id022
+    pml: *id023
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardF__reference_only
+  overrides:
+    medium: &id024
+      velocity_model: smooth_lens
+    physics: &id025
+      omega: 120.0
+      source_pos:
+      - 0.15
+      - 0.5
+    grid: &id026
+      nx: 306
+      ny: 306
+    pml: &id027
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardF__base_nsno
+  overrides:
+    medium: *id024
+    physics: *id025
+    grid: *id026
+    pml: *id027
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardF__deep_nsno
+  overrides:
+    medium: *id024
+    physics: *id025
+    grid: *id026
+    pml: *id027
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardF__best_hybrid_proxy
+  overrides:
+    medium: *id024
+    physics: *id025
+    grid: *id026
+    pml: *id027
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardF__best_curriculum_proxy
+  overrides:
+    medium: *id024
+    physics: *id025
+    grid: *id026
+    pml: *id027
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardG__reference_only
+  overrides:
+    medium: &id028
+      velocity_model: smooth_lens
+    physics: &id029
+      omega: 180.0
+      source_pos:
+      - 0.5
+      - 0.5
+    grid: &id030
+      nx: 459
+      ny: 459
+    pml: &id031
+      width: 32
+      power: 2
+      R0: 1.0e-06
+    training:
+      epochs: 1
+  entrypoint: reference_only
+- run_id: cardG__base_nsno
+  overrides:
+    medium: *id028
+    physics: *id029
+    grid: *id030
+    pml: *id031
+    model: *id010
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardG__deep_nsno
+  overrides:
+    medium: *id028
+    physics: *id029
+    grid: *id030
+    pml: *id031
+    model: *id011
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 0.0
+      supervision:
+        enabled: false
+        reference_path: null
+        target_kind: scattering_envelope
+- run_id: cardG__best_hybrid_proxy
+  overrides:
+    medium: *id028
+    physics: *id029
+    grid: *id030
+    pml: *id031
+    model: *id005
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: cardG__best_curriculum_proxy
+  overrides:
+    medium: *id028
+    physics: *id029
+    grid: *id030
+    pml: *id031
+    model: *id005
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: linear
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched

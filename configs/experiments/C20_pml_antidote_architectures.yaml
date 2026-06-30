@@ -1,0 +1,3570 @@
+batch_id: C20
+name: pml_antidote_architectures
+status: active
+entrypoint: train
+purpose: Repo-feasible architecture antidotes for PML training traps.
+expected_runs: 72
+fixed:
+  residual:
+    lap_tau_mode: stretched_divergence
+  model:
+    nsno_blocks: 12
+    nsno_channels: 48
+    fno_modes: 16
+    activation: gelu
+    pointwise_variant: linear
+  training:
+    epochs: 5000
+    lr: 0.0003
+    lambda_pde: 1.0
+    lambda_data: 0.0
+    supervision:
+      enabled: false
+      reference_path: null
+      target_kind: scattering_envelope
+  logging:
+    level: INFO
+matrix:
+- run_id: smooth_lens__omega090__N230__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: &id001
+      nsno_blocks: 4
+      nsno_channels: 32
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_0p0001__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em06__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em08__base_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id001
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: &id002
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: linear
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_0p0001__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em06__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em08__deep_nsno
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id002
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: &id003
+      nsno_blocks: 12
+      nsno_channels: 48
+      fno_modes: 16
+      activation: gelu
+      pointwise_variant: quadratic
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_0p0001__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em06__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em08__quadratic_pointwise
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 5000
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega090__N230__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega090__N230__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 90.0
+    grid:
+      nx: 230
+      ny: 230
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega090_L12
+          overrides:
+            physics:
+              omega: 90.0
+            grid:
+              nx: 230
+              ny: 230
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega120__N306__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega120__N306__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 120.0
+    grid:
+      nx: 306
+      ny: 306
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega045_L12
+          overrides:
+            physics:
+              omega: 45.0
+            grid:
+              nx: 115
+              ny: 115
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: smooth_lens__omega180__N459__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: smooth_lens
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_0p0001__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 0.0001
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em06__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-06
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
+- run_id: layered__omega180__N459__R0_1em08__quadratic_curriculum
+  overrides:
+    medium:
+      velocity_model: layered
+    physics:
+      omega: 180.0
+    grid:
+      nx: 459
+      ny: 459
+    pml:
+      width: 24
+      power: 2
+      R0: 1.0e-08
+    model: *id003
+    training:
+      epochs: 1500
+      lr: 0.0003
+      lambda_pde: 1.0
+      lambda_data: 10.0
+      supervision:
+        enabled: true
+        reference_path: null
+        target_kind: scattering_envelope
+      curriculum:
+        enabled: true
+        schedule_name: octave_4
+        stages:
+        - name: omega030_L12
+          overrides:
+            physics:
+              omega: 30.0
+            grid:
+              nx: 77
+              ny: 77
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: false
+            reset_optimizer: true
+            strict: false
+        - name: omega060_L12
+          overrides:
+            physics:
+              omega: 60.0
+            grid:
+              nx: 153
+              ny: 153
+            pml:
+              width: 16
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega120_L12
+          overrides:
+            physics:
+              omega: 120.0
+            grid:
+              nx: 306
+              ny: 306
+            pml:
+              width: 24
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+        - name: omega180_L12
+          overrides:
+            physics:
+              omega: 180.0
+            grid:
+              nx: 459
+              ny: 459
+            pml:
+              width: 32
+            model:
+              nsno_blocks: 12
+              nsno_channels: 48
+              fno_modes: 16
+              activation: gelu
+              pointwise_variant: quadratic
+            training:
+              epochs: 1250
+              lr: 0.0003
+          warm_start:
+            enabled: true
+            reset_optimizer: true
+            strict: false
+  reference_prep:
+    enabled: true
+    label_name: matched
